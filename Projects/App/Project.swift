@@ -30,8 +30,7 @@ let targets: [Target] = [
         resources: ["Resources/**"],
         scripts: scripts,
         dependencies: [
-            .Project.Features.CommonFeature,
-            .Project.Module.ThirdPartyLib,
+            .Project.Features.RootFeature,
             .Project.Module.InjectManager
         ]
     ),
@@ -48,7 +47,7 @@ let targets: [Target] = [
             .SPM.Quick,
             .SPM.Nimble
         ]
-    ),
+    )
 ]
 
 let schemes: [Scheme] = [

@@ -2,7 +2,7 @@ import ProjectDescription
 
 let dependencies = Dependencies(
     carthage: nil,
-    swiftPackageManager: [
+    swiftPackageManager:[
         .remote(url: "https://github.com/uber/RIBs.git", requirement: .upToNextMajor(from: "0.10.0")),
         .remote(url: "https://github.com/Moya/Moya.git", requirement: .upToNextMajor(from: "15.0.0")),
         .remote(url: "https://github.com/Swinject/Swinject.git", requirement: .upToNextMajor(from: "2.0.0")),

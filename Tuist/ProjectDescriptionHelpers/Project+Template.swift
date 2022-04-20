@@ -124,6 +124,8 @@ public extension Project {
         let testTargetDependencies: [TargetDependency] = hasDemoApp
         ? [.target(name: "\(name)DemoApp"), .SPM.Quick, .SPM.Nimble]
         : [.target(name: name), .SPM.Quick, .SPM.Nimble]
+//        ? [.target(name: "\(name)DemoApp")]
+//        : [.target(name: name)]
         
         let testTarget = Target(
             name: "\(name)Tests",
