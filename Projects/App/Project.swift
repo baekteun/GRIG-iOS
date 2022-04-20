@@ -29,9 +29,10 @@ let targets: [Target] = [
         resources: ["Resources/**"],
         scripts: scripts,
         dependencies: [
-            .Project.Features.MainFeature,
+            .Project.Features.CommonFeature,
             .Project.Module.ThirdPartyLib,
-            .Project.Module.InjectManager
+            .Project.Module.InjectManager,
+            .SPM.RIBs
         ]
     ),
     .init(

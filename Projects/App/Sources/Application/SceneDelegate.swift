@@ -3,7 +3,6 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    private let disposeBag: DisposeBag = .init()
 
     func scene(
         _ scene: UIScene,

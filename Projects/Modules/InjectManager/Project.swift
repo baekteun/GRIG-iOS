@@ -6,7 +6,7 @@ let project = Project.framework(
     dependencies: [
         .Project.Module.ThirdPartyLib,
         .Project.Module.Utility,
-        .Project.Features.MainFeature,
+        .Project.Features.CommonFeature,
         .Project.Service.Data,
         .Project.Service.Domain
     ]

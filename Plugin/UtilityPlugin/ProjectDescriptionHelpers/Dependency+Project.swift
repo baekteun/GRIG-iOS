@@ -9,7 +9,7 @@ public extension TargetDependency {
 }
 
 public extension TargetDependency.Project.Features {
-    static let MainFeature = TargetDependency.feature(name: "MainFeature")
+    static let CommonFeature = TargetDependency.feature(name: "CommonFeature")
 }
 
 public extension TargetDependency.Project.Module {
