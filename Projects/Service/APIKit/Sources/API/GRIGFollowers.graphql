@@ -1,0 +1,9 @@
+query GRIGFollowers($criteria: String, $count: Int, $page: Int, $generation: Int) {
+  ranking(criteria: $criteria, count: $count, page: $page, generation: $generation) {
+    name
+    nickname
+    bio
+    avatar_url
+    followers
+  }
+}

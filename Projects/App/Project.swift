@@ -13,7 +13,8 @@ let settinges: Settings =
               defaultSettings: .recommended)
 
 let scripts: [TargetScript] = [
-    .swiftLint
+    .swiftLint,
+    .generateApolloGraphQLAPI
 ]
 
 let targets: [Target] = [
@@ -31,8 +32,7 @@ let targets: [Target] = [
         dependencies: [
             .Project.Features.CommonFeature,
             .Project.Module.ThirdPartyLib,
-            .Project.Module.InjectManager,
-            .SPM.RIBs
+            .Project.Module.InjectManager
         ]
     ),
     .init(
