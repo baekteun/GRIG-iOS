@@ -5,6 +5,5 @@ let project = Project.staticFramework(
     name: "APIKit",
     sources: ["Sources/**", "Sources/**/*.graphql"],
     dependencies: [
-        .SPM.Apollo
     ]
 )

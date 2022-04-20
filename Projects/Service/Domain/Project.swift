@@ -5,6 +5,8 @@ let project = Project.staticFramework(
     name: "Domain",
     dependencies: [
         .Project.Service.APIKit,
-        .SPM.Apollo
+        .Project.Module.ThirdPartyLib,
+        .SPM.Apollo,
+        .Project.Module.Utility
     ]
 )
