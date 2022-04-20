@@ -15,6 +15,7 @@ let project = Project.framework(
         .SPM.RxRelay,
         .SPM.RxDataSources,
         .SPM.Then,
-        .SPM.SnapKit
+        .SPM.SnapKit,
+        .SPM.Apollo,
     ]
 )
