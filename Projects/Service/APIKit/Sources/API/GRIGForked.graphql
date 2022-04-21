@@ -1,6 +1,7 @@
 query GRIGForked($criteria: String, $count: Int, $page: Int, $generation: Int) {
   ranking(criteria: $criteria, count: $count, page: $page, generation: $generation) {
     name
+	generation
     nickname
     bio
     avatar_url

@@ -2,6 +2,7 @@ query GRIGIssues($criteria: String, $count: Int, $page: Int, $generation: Int) {
   ranking(criteria: $criteria, count: $count, page: $page, generation: $generation) {
     name
     nickname
+	generation
     bio
     avatar_url
     issues

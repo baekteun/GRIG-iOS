@@ -2,6 +2,7 @@ query GRIGPullRequests($criteria: String, $count: Int, $page: Int, $generation: 
   ranking(criteria: $criteria, count: $count, page: $page, generation: $generation) {
     name
     nickname
+	generation
     bio
     avatar_url
     pullRequests

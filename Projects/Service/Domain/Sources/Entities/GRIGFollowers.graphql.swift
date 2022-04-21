@@ -19,6 +19,7 @@ public extension GRIGAPI {
         ) {
           __typename
           name
+          generation
           nickname
           bio
           avatar_url
@@ -80,6 +81,7 @@ public extension GRIGAPI {
           return [
             GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
             GraphQLField("name", type: .scalar(String.self)),
+            GraphQLField("generation", type: .scalar(Int.self)),
             GraphQLField("nickname", type: .scalar(String.self)),
             GraphQLField("bio", type: .scalar(String.self)),
             GraphQLField("avatar_url", type: .scalar(String.self)),
@@ -93,8 +95,8 @@ public extension GRIGAPI {
           self.resultMap = unsafeResultMap
         }
 
-        public init(name: String? = nil, nickname: String? = nil, bio: String? = nil, avatarUrl: String? = nil, followers: Int? = nil) {
-          self.init(unsafeResultMap: ["__typename": "User", "name": name, "nickname": nickname, "bio": bio, "avatar_url": avatarUrl, "followers": followers])
+        public init(name: String? = nil, generation: Int? = nil, nickname: String? = nil, bio: String? = nil, avatarUrl: String? = nil, followers: Int? = nil) {
+          self.init(unsafeResultMap: ["__typename": "User", "name": name, "generation": generation, "nickname": nickname, "bio": bio, "avatar_url": avatarUrl, "followers": followers])
         }
 
         public var __typename: String {
@@ -112,6 +114,15 @@ public extension GRIGAPI {
           }
           set {
             resultMap.updateValue(newValue, forKey: "name")
+          }
+        }
+
+        public var generation: Int? {
+          get {
+            return resultMap["generation"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "generation")
           }
         }
 
