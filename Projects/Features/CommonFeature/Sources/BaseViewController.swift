@@ -3,9 +3,9 @@ import RxSwift
 
 open class BaseViewController: UIViewController {
     public let bounds = UIScreen.main.bounds
-    public var disposeBag = DisposeBag()
+    open var disposeBag = DisposeBag()
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         bindOutput()
     }
@@ -27,10 +27,10 @@ open class BaseViewController: UIViewController {
         configureVC()
     }
     
-    public func setUp() {}
-    public func addView() {}
-    public func setLayout() {}
-    public func configureVC() {}
+    open func setUp() {}
+    open func addView() {}
+    open func setLayout() {}
+    open func configureVC() {}
     
-    public func bindOutput() {}
+    open func bindOutput() {}
 }
