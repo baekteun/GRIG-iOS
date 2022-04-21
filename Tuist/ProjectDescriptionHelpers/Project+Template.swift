@@ -81,6 +81,8 @@ public extension Project {
         infoPlist: InfoPlist,
         hasDemoApp: Bool = false
     ) -> Project {
+        let scripts: [TargetScript] = [
+        ]
         let settings: Settings = .settings(
             base: Environment.baseSetting,
             configurations: [
@@ -98,6 +100,7 @@ public extension Project {
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
+            scripts: scripts,
             dependencies: dependencies
         )
         let demoSource: SourceFilesList = ["Demo/Sources/**"]
@@ -116,6 +119,7 @@ public extension Project {
             ]),
             sources: demoSources,
             resources: ["Demo/Resources/**"],
+            scripts: scripts,
             dependencies: [
                 .target(name: name)
             ]
@@ -124,8 +128,6 @@ public extension Project {
         let testTargetDependencies: [TargetDependency] = hasDemoApp
         ? [.target(name: "\(name)DemoApp"), .SPM.Quick, .SPM.Nimble]
         : [.target(name: name), .SPM.Quick, .SPM.Nimble]
-//        ? [.target(name: "\(name)DemoApp")]
-//        : [.target(name: name)]
         
         let testTarget = Target(
             name: "\(name)Tests",
