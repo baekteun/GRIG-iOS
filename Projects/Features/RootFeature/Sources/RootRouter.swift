@@ -8,8 +8,9 @@
 
 import ThirdPartyLib
 import RIBs
+import MainFeature
 
-protocol RootInteractable: Interactable {
+protocol RootInteractable: Interactable, MainListener {
     var router: RootRouting? { get set }
     var listener: RootListener? { get set }
 }
@@ -19,10 +20,28 @@ protocol RootViewControllable: ViewControllable {
 }
 
 final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, RootRouting {
-
-    // TODO: Constructor inject child builder protocols to allow building children.
-    override init(interactor: RootInteractable, viewController: RootViewControllable) {
+    private let mainBuilder: MainBuildable
+    
+    init(
+        mainBuilder: MainBuildable,
+        interactor: RootInteractable,
+        viewController: RootViewControllable
+    ) {
+        self.mainBuilder = mainBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+    
+    override func didLoad() {
+        super.didLoad()
+        attachMain()
+    }
+}
+
+private extension RootRouter {
+    func attachMain() {
+        let router = mainBuilder.build(withListener: interactor)
+        attachChild(router)
+        viewControllable.setViewControllers([router.viewControllable], animated: false)
     }
 }

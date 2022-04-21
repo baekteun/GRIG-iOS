@@ -7,6 +7,7 @@
 //
 
 import RIBs
+import MainFeature
 
 public protocol RootDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
@@ -24,6 +25,7 @@ final class RootComponent: Component<RootDependency> {
         super.init(dependency: dependency)
     }
 }
+extension RootComponent: MainDependency {}
 
 // MARK: - Builder
 
@@ -40,8 +42,13 @@ public final class RootBuilder: Builder<RootDependency>, RootBuildable {
 
     public func build() -> LaunchRouting {
         let viewController = RootViewController()
-        _ = RootComponent(dependency: dependency, viewController: viewController)
+        let component = RootComponent(dependency: dependency, viewController: viewController)
         let interactor = RootInteractor(presenter: viewController)
-        return RootRouter(interactor: interactor, viewController: viewController)
+        let mainBuilder = MainBuilder(dependency: component)
+        return RootRouter(
+            mainBuilder: mainBuilder,
+            interactor: interactor,
+            viewController: viewController
+        )
     }
 }

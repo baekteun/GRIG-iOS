@@ -56,19 +56,19 @@ public extension ViewControllable {
             self.uiviewController.navigationController?.popToRootViewController(animated: animated)
         }
     }
-    func setViewControllers(_ viewControllerables: [ViewControllable]) {
+    func setViewControllers(_ viewControllerables: [ViewControllable], animated: Bool) {
         if let nav = self.uiviewController as? UINavigationController {
-            nav.setViewControllers(viewControllerables.map(\.uiviewController), animated: true)
+            nav.setViewControllers(viewControllerables.map(\.uiviewController), animated: animated)
         } else {
             self.uiviewController.navigationController?.setViewControllers(
                 viewControllerables.map(\.uiviewController),
-                animated: true
+                animated: animated
             )
         }
     }
-    func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+    func setViewControllersInTabbar(_ viewControllers: [ViewControllable], animated: Bool) {
         guard let tab = self.uiviewController as? UITabBarController else { return }
-        tab.setViewControllers(viewControllers, animated: animated)
+        tab.setViewControllers(viewControllers.map(\.uiviewController), animated: animated)
     }
     var topViewControllable: ViewControllable {
         var top: ViewControllable = self
