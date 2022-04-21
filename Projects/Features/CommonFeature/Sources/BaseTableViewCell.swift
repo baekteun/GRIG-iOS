@@ -1,9 +1,37 @@
-//
-//  BaseTableViewCell.swift
-//  CommonFeature
-//
-//  Created by 최형우 on 2022/04/21.
-//  Copyright © 2022 baegteun. All rights reserved.
-//
+import UIKit
+import Reusable
+import RxSwift
 
-import Foundation
+open class BaseTableViewCell<T>: UITableViewCell, Reusable {
+    public let bound = UIScreen.main.bounds
+    public lazy var disposeBag = DisposeBag()
+    public var model: T? {
+        didSet { if let model = model { bind(model) } }
+    }
+    
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        model = nil
+        disposeBag = DisposeBag()
+    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        addView()
+        setLayout()
+        configureCell()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        addView()
+        setLayout()
+        configureCell()
+    }
+    
+    public func addView() {}
+    public func setLayout() {}
+    public func configureCell() {}
+    public func bind(_ modle: T) {}
+}
