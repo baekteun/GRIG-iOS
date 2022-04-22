@@ -2,5 +2,8 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.framework(
-    name: "Utility"
+    name: "Utility",
+    dependencies: [
+        .Project.Module.ThirdPartyLib
+    ]
 )
