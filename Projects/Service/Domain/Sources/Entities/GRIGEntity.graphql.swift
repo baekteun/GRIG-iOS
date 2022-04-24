@@ -6,11 +6,11 @@ import Foundation
 
 /// GRIGAPI namespace
 public extension GRIGAPI {
-  final class GrigFollowingQuery: GraphQLQuery {
+  final class GrigEntityQuery: GraphQLQuery {
     /// The raw GraphQL definition of this operation.
     public let operationDefinition: String =
       """
-      query GRIGFollowing($criteria: String, $count: Int, $page: Int, $generation: Int) {
+      query GRIGEntity($criteria: String, $count: Int, $page: Int, $generation: Int) {
         ranking(
           criteria: $criteria
           count: $count
@@ -19,16 +19,22 @@ public extension GRIGAPI {
         ) {
           __typename
           name
-          generation
           nickname
           bio
           avatar_url
+          pullRequests
+          stared
+          issues
+          generation
+          forked
           following
+          followers
+          contributions
         }
       }
       """
 
-    public let operationName: String = "GRIGFollowing"
+    public let operationName: String = "GRIGEntity"
 
     public var criteria: String?
     public var count: Int?
@@ -81,11 +87,17 @@ public extension GRIGAPI {
           return [
             GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
             GraphQLField("name", type: .scalar(String.self)),
-            GraphQLField("generation", type: .scalar(Int.self)),
             GraphQLField("nickname", type: .scalar(String.self)),
             GraphQLField("bio", type: .scalar(String.self)),
             GraphQLField("avatar_url", type: .scalar(String.self)),
+            GraphQLField("pullRequests", type: .scalar(Int.self)),
+            GraphQLField("stared", type: .scalar(Int.self)),
+            GraphQLField("issues", type: .scalar(Int.self)),
+            GraphQLField("generation", type: .scalar(Int.self)),
+            GraphQLField("forked", type: .scalar(Int.self)),
             GraphQLField("following", type: .scalar(Int.self)),
+            GraphQLField("followers", type: .scalar(Int.self)),
+            GraphQLField("contributions", type: .scalar(Int.self)),
           ]
         }
 
@@ -95,8 +107,8 @@ public extension GRIGAPI {
           self.resultMap = unsafeResultMap
         }
 
-        public init(name: String? = nil, generation: Int? = nil, nickname: String? = nil, bio: String? = nil, avatarUrl: String? = nil, following: Int? = nil) {
-          self.init(unsafeResultMap: ["__typename": "User", "name": name, "generation": generation, "nickname": nickname, "bio": bio, "avatar_url": avatarUrl, "following": following])
+        public init(name: String? = nil, nickname: String? = nil, bio: String? = nil, avatarUrl: String? = nil, pullRequests: Int? = nil, stared: Int? = nil, issues: Int? = nil, generation: Int? = nil, forked: Int? = nil, following: Int? = nil, followers: Int? = nil, contributions: Int? = nil) {
+          self.init(unsafeResultMap: ["__typename": "User", "name": name, "nickname": nickname, "bio": bio, "avatar_url": avatarUrl, "pullRequests": pullRequests, "stared": stared, "issues": issues, "generation": generation, "forked": forked, "following": following, "followers": followers, "contributions": contributions])
         }
 
         public var __typename: String {
@@ -114,15 +126,6 @@ public extension GRIGAPI {
           }
           set {
             resultMap.updateValue(newValue, forKey: "name")
-          }
-        }
-
-        public var generation: Int? {
-          get {
-            return resultMap["generation"] as? Int
-          }
-          set {
-            resultMap.updateValue(newValue, forKey: "generation")
           }
         }
 
@@ -153,12 +156,75 @@ public extension GRIGAPI {
           }
         }
 
+        public var pullRequests: Int? {
+          get {
+            return resultMap["pullRequests"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "pullRequests")
+          }
+        }
+
+        public var stared: Int? {
+          get {
+            return resultMap["stared"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "stared")
+          }
+        }
+
+        public var issues: Int? {
+          get {
+            return resultMap["issues"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "issues")
+          }
+        }
+
+        public var generation: Int? {
+          get {
+            return resultMap["generation"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "generation")
+          }
+        }
+
+        public var forked: Int? {
+          get {
+            return resultMap["forked"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "forked")
+          }
+        }
+
         public var following: Int? {
           get {
             return resultMap["following"] as? Int
           }
           set {
             resultMap.updateValue(newValue, forKey: "following")
+          }
+        }
+
+        public var followers: Int? {
+          get {
+            return resultMap["followers"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "followers")
+          }
+        }
+
+        public var contributions: Int? {
+          get {
+            return resultMap["contributions"] as? Int
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "contributions")
           }
         }
       }
