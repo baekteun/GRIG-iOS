@@ -6,6 +6,9 @@ import RxSwift
 
 struct GRIGRemote {
     private let client = ApolloClient(url: URL(string: "https://d6ui2fy5uj.execute-api.ap-northeast-2.amazonaws.com/api/graphql")!)
+    private init() {}
+    
+    static let shared = GRIGRemote()
     
     func request(
         criteria: Criteria,

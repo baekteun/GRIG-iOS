@@ -7,5 +7,5 @@ public protocol GRIGRepository {
         count: Int,
         page: Int,
         generation: Int
-    ) -> Single<[GRIGAPI.GrigEntityQuery.Data.Ranking]>
+    ) -> Single<[GRIGAPI.GrigEntityQuery.Data.Ranking?]>
 }
