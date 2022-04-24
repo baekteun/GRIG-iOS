@@ -8,11 +8,7 @@ open class BaseTableViewCell<T>: UITableViewCell, Reusable {
         didSet { if let model = model { bind(model) } }
     }
     
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addView()
         setLayout()

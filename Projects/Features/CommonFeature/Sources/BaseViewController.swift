@@ -5,10 +5,10 @@ open class BaseViewController: UIViewController {
     public let bounds = UIScreen.main.bounds
     open var disposeBag = DisposeBag()
     
-    open override func viewDidLoad() {
-        super.viewDidLoad()
-        bindOutput()
-    }
+//    open override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        bindPresenter()
+//    }
     
     public init() {
         super.init(nibName: nil, bundle: nil)
@@ -32,5 +32,5 @@ open class BaseViewController: UIViewController {
     open func setLayout() {}
     open func configureVC() {}
     
-    open func bindOutput() {}
+    open func bindPresenter() {}
 }

@@ -1,13 +1,7 @@
-//
-//  MainInteractor.swift
-//  MainFeatureTests
-//
-//  Created by 최형우 on 2022/04/21.
-//  Copyright © 2022 baegteun. All rights reserved.
-//
-
 import RIBs
 import RxSwift
+import RxRelay
+import Domain
 
 public protocol MainRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -15,7 +9,7 @@ public protocol MainRouting: ViewableRouting {
 
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
+    var viewWillAppearTrigger: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -26,7 +20,9 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 
     weak var router: MainRouting?
     weak var listener: MainListener?
-
+    
+    private var rankingListRelay = BehaviorRelay<[GRIGEntity]>(value: [])
+    
     // TODO: Add additional dependencies to constructor. Do not perform any logic
     // in constructor.
     override init(presenter: MainPresentable) {
@@ -36,11 +32,19 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
+        presenter.viewWillAppearTrigger
+            .map { _ in [
+                GRIGEntity.init(name: "asdf", nickname: "asdf", generation: 2, bio: "대충대충대충\n대충대충", avatarUrl: "https://avatars.githubusercontent.com/u/74440939?v=4", result: 68)
+            ]}
+            .bind(to: rankingListRelay)
+            .disposeOnDeactivate(interactor: self)
     }
 
     override func willResignActive() {
         super.willResignActive()
-        // TODO: Pause any business logic.
     }
+}
+
+extension MainInteractor {
+    var rankingList: BehaviorRelay<[GRIGEntity]> { rankingListRelay }
 }
