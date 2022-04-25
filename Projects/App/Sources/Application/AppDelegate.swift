@@ -1,13 +1,17 @@
 import UIKit
+import InjectManager
+import Core
+import Swinject
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    private var assembler: Assembler!
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // Override point for customization after application launch.
+        assembler = InjectManager.inject(container: Core.container)
         return true
     }
 
@@ -18,8 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 

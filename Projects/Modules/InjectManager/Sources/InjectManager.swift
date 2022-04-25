@@ -1,9 +1,13 @@
-//
-//  InjectManager.swift
-//  InjectManagerTests
-//
-//  Created by 최형우 on 2022/04/25.
-//  Copyright © 2022 baegteun. All rights reserved.
-//
+import Core
+import Swinject
+import Data
+import Domain
 
-import Foundation
+public struct InjectManager {
+    public static func inject(container: Container) -> Assembler {
+        return Assembler([
+            RepositoryAssembly(),
+            UseCaseAssembly()
+        ], container: container)
+    }
+}
