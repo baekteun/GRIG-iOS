@@ -1,10 +1,11 @@
 import Swinject
 import Domain
 
-final class RepositoryAssembly: Assembly {
-    func assemble(container: Container) {
+public struct RepositoryAssembly: Assembly {
+    public func assemble(container: Container) {
         container.register(GRIGRepository.self) { _ in
             GRIGRepositoryImpl()
         }
     }
+    public init() {}
 }
