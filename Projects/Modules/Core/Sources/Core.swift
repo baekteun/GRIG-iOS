@@ -1,9 +1,6 @@
-//
-//  Core.swift
-//  Core
-//
-//  Created by 최형우 on 2022/04/25.
-//  Copyright © 2022 baegteun. All rights reserved.
-//
+import Swinject
 
-import Foundation
+
+public struct Core {
+    public static let container = Container()
+}
