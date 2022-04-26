@@ -9,17 +9,19 @@ import Utility
 import SnapKit
 import Domain
 import RxDataSources
+import Core
 
 protocol MainPresentableListener: AnyObject {
-    var rankingList: BehaviorRelay<[GRIGEntity]> { get }
+    var rankingListSection: BehaviorRelay<[RankTableSection]> { get }
 }
 
 final class MainViewController: BaseViewController, MainPresentable, MainViewControllable {
     // MARK: - Properties
     private let rankTableView = UITableView().then {
         $0.register(cellType: RankTableCell.self)
-//        $0.separatorStyle = .none
-        $0.rowHeight = UITableView.automaticDimension
+        $0.rowHeight = 75
+        $0.backgroundColor = .clear
+        $0.separatorStyle = .none
     }
     private let rankCollectionView = UICollectionView(frame: .zero, collectionViewLayout: .init()).then {
         let layout = UICollectionViewFlowLayout()
@@ -56,19 +58,18 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         }
     }
     override func configureVC() {
-        
+        view.backgroundColor = CoreAsset.Colors.grigBackground.color
     }
     
     // MARK: - Binding
     override func bindPresenter() {
-        let rankTableDS = RxTableViewSectionedReloadDataSource<RankTableSection> { _, tv, ip, item in
+        let rankTableDS = RxTableViewSectionedReloadDataSource<RankTableSection> { ds, tv, ip, item in
             let cell = tv.dequeueReusableCell(for: ip, cellType: RankTableCell.self)
-            cell.model = (ip.row+1, item)
+            cell.model = (ip.row+1, item.0, item.1)
             return cell
         }
         
-        listener?.rankingList
-            .map { [RankTableSection.init(items: $0)] }
+        listener?.rankingListSection
             .bind(to: rankTableView.rx.items(dataSource: rankTableDS))
             .disposed(by: disposeBag)
     }

@@ -2,6 +2,7 @@ import RIBs
 import RxSwift
 import RxRelay
 import Domain
+import Utility
 
 public protocol MainRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -21,7 +22,9 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     weak var router: MainRouting?
     weak var listener: MainListener?
     
-    private var rankingListRelay = BehaviorRelay<[GRIGEntity]>(value: [])
+    private var criteria = Criteria.contributions
+    
+    private var rankingListSectionRelay = BehaviorRelay<[RankTableSection]>(value: [])
     
     // TODO: Add additional dependencies to constructor. Do not perform any logic
     // in constructor.
@@ -34,9 +37,26 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
         super.didBecomeActive()
         presenter.viewWillAppearTrigger
             .map { _ in [
-                GRIGEntity.init(name: "asdf", nickname: "asdf", generation: 2, bio: "대충대충대충\n대충대충", avatarUrl: "https://avatars.githubusercontent.com/u/74440939?v=4", result: 68)
+                .init(
+                    name: "name",
+                    nickname: "nickname",
+                    bio: "bio",
+                    avatarUrl: "https://avatars.githubusercontent.com/u/74440939?v=4",
+                    pullRequests: 12,
+                    stared: 2,
+                    issues: 27,
+                    generation: 5,
+                    forked: 3,
+                    following: 336,
+                    followers: 2,
+                    contributions: 4003
+                )
             ]}
-            .bind(to: rankingListRelay)
+            .map { [weak self] entity in
+                entity.map { (self?.criteria ?? .contributions, $0) }
+            }
+            .map { [RankTableSection(items: $0)] }
+            .bind(to: rankingListSectionRelay)
             .disposeOnDeactivate(interactor: self)
     }
 
@@ -46,5 +66,5 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 }
 
 extension MainInteractor {
-    var rankingList: BehaviorRelay<[GRIGEntity]> { rankingListRelay }
+    var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
 }
