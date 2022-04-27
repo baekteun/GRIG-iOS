@@ -1,11 +1,21 @@
 import RIBs
 import UIKit
+import PanModal
 
 public extension ViewControllable {
-    func present(_ viewControllable: ViewControllable, animated: Bool, completion: (() -> Void)?) {
+    func present(
+        _ viewControllable: ViewControllable,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
         self.uiviewController.present(viewControllable.uiviewController, animated: animated, completion: completion)
     }
-    func dismiss(animated : Bool,completion: (() -> Void)?) {
+    func presentPanModal(
+        _ viewController: UIViewController & PanModalPresentable
+    ) {
+        self.uiviewController.presentPanModal(viewController)
+    }
+    func dismiss(animated : Bool, completion: (() -> Void)?) {
         self.uiviewController.dismiss(animated: animated, completion: completion)
     }
     func presentAlert(

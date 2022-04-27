@@ -16,5 +16,6 @@ let project = Project.framework(
         .SPM.Then,
         .SPM.SnapKit,
         .SPM.Apollo,
+        .SPM.PanModal
     ]
 )

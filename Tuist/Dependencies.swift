@@ -13,7 +13,8 @@ let dependencies = Dependencies(
         .remote(url: "https://github.com/onevcat/Kingfisher.git", requirement: .upToNextMajor(from: "7.0.0")),
         .remote(url: "https://github.com/Quick/Quick.git", requirement: .upToNextMajor(from: "5.0.0")),
         .remote(url: "https://github.com/Quick/Nimble.git", requirement: .upToNextMajor(from: "9.0.0")),
-        .remote(url: "https://github.com/apollographql/apollo-ios.git", requirement: .upToNextMajor(from: "0.50.0"))
+        .remote(url: "https://github.com/apollographql/apollo-ios.git", requirement: .upToNextMajor(from: "0.50.0")),
+        .remote(url: "https://github.com/slackhq/PanModal.git", requirement: .upToNextMajor(from: "1.2.7"))
     ],
     platforms: [.iOS]
 )

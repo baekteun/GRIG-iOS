@@ -19,4 +19,5 @@ public extension TargetDependency.SPM {
     static let Quick = TargetDependency.external(name: "Quick")
     static let Nimble = TargetDependency.external(name: "Nimble")
     static let Apollo = TargetDependency.external(name: "Apollo")
+    static let PanModal = TargetDependency.external(name: "PanModal")
 }
