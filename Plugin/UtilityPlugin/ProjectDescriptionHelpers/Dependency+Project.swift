@@ -17,7 +17,7 @@ public extension TargetDependency.Project.Features {
 public extension TargetDependency.Project.Module {
     static let Core = TargetDependency.module(name: "Core")
     static let ThirdPartyLib = TargetDependency.module(name: "ThirdPartyLib")
-    static let InjectManager = TargetDependency.module(name: "InjectManager")
+    static let ModuleKeep = TargetDependency.module(name: "ModuleKeep")
     static let Utility = TargetDependency.module(name: "Utility")
 }
 
