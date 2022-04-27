@@ -7,8 +7,9 @@
 //
 
 import RIBs
+import UserFeature
 
-public protocol MainDependency: Dependency {
+public protocol MainDependency: Dependency, UserDependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -31,10 +32,11 @@ public final class MainBuilder: Builder<MainDependency>, MainBuildable {
     }
 
     public func build(withListener listener: MainListener) -> MainRouting {
-        let component = MainComponent(dependency: dependency)
+        _ = MainComponent(dependency: dependency)
         let viewController = MainViewController()
         let interactor = MainInteractor(presenter: viewController)
         interactor.listener = listener
-        return MainRouter(interactor: interactor, viewController: viewController)
+        let userBuilder = UserBuilder(dependency: dependency)
+        return MainRouter(interactor: interactor, viewController: viewController, userBuilder: userBuilder)
     }
 }
