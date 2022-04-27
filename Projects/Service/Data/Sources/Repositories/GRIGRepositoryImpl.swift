@@ -5,6 +5,8 @@ import Utility
 struct GRIGRepositoryImpl: GRIGRepository {
     private let grigRemote = GRIGRemote.shared
     
+    init() {}
+    
     func fetchRankingList(
         criteria: Criteria,
         count: Int,

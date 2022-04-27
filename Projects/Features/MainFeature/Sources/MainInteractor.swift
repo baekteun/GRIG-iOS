@@ -3,6 +3,10 @@ import RxSwift
 import RxRelay
 import Domain
 import Utility
+import Swinject
+import CommonFeature
+import InjectManager
+import ThirdPartyLib
 
 public protocol MainRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -23,12 +27,18 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     weak var listener: MainListener?
     
     private var criteria = Criteria.contributions
+    private var page = 1
+    private var generation = 0
     
     private var rankingListSectionRelay = BehaviorRelay<[RankTableSection]>(value: [])
     
-    // TODO: Add additional dependencies to constructor. Do not perform any logic
-    // in constructor.
-    override init(presenter: MainPresentable) {
+    private let fetchRankingListUseCase: FetchRankingListUseCase
+    
+    init(
+        presenter: MainPresentable,
+        fetchRankingListUseCase: FetchRankingListUseCase = DIContainer.resolve(FetchRankingListUseCase.self)!
+    ) {
+        self.fetchRankingListUseCase = fetchRankingListUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -36,24 +46,17 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     override func didBecomeActive() {
         super.didBecomeActive()
         presenter.viewWillAppearTrigger
-            .map { _ in [
-                .init(
-                    name: "name",
-                    nickname: "nickname",
-                    bio: "bio",
-                    avatarUrl: "https://avatars.githubusercontent.com/u/74440939?v=4",
-                    pullRequests: 12,
-                    stared: 2,
-                    issues: 27,
-                    generation: 5,
-                    forked: 3,
-                    following: 336,
-                    followers: 2,
-                    contributions: 4003
+            .withUnretained(self)
+            .flatMap({ owner, _ in
+                owner.fetchRankingListUseCase.execute(
+                    criteria: owner.criteria,
+                    count: 30,
+                    page: owner.page,
+                    generation: owner.generation
                 )
-            ]}
+            })
             .map { [weak self] entity in
-                entity.map { (self?.criteria ?? .contributions, $0) }
+                entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
             }
             .map { [RankTableSection(items: $0)] }
             .bind(to: rankingListSectionRelay)

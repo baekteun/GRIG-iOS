@@ -1,17 +1,16 @@
 import UIKit
-import InjectManager
-import Core
-import Swinject
+import Data
+import ThirdPartyLib
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    private var assembler: Assembler!
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        assembler = InjectManager.inject(container: Core.container)
+        DIContainer.shared.registerRepository()
+        DIContainer.shared.registerUseCase()
         return true
     }
 

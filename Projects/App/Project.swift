@@ -30,7 +30,7 @@ let targets: [Target] = [
         scripts: scripts,
         dependencies: [
             .Project.Features.RootFeature,
-            .Project.Module.InjectManager
+            .Project.Module.ModuleKeep
         ]
     ),
     .init(
