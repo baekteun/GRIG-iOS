@@ -13,6 +13,7 @@ public extension TargetDependency.Project.Features {
     static let MainFeature = TargetDependency.feature(name: "MainFeature")
     static let RootFeature = TargetDependency.feature(name: "RootFeature")
     static let UserFeature = TargetDependency.feature(name: "UserFeature")
+    static let SortFeature = TargetDependency.feature(name: "SortFeature")
 }
 
 public extension TargetDependency.Project.Module {

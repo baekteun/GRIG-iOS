@@ -2,9 +2,8 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.staticFramework(
-    name: "MainFeature",
+    name: "SortFeature",
     dependencies: [
-        .Project.Features.UserFeature,
-        .Project.Features.SortFeature
+        .Project.Features.CommonFeature
     ]
 )
