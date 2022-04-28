@@ -9,14 +9,30 @@
 import RIBs
 import RxSwift
 import UIKit
+import PanModal
 
 protocol UserPresentableListener: AnyObject {
-    // TODO: Declare properties and methods that the view controller can invoke to perform
-    // business logic, such as signIn(). This protocol is implemented by the corresponding
-    // interactor class.
+    
 }
 
 final class UserViewController: UIViewController, UserPresentable, UserViewControllable {
-
+    // MARK: - Properties
+    private let userProfileImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private let nicknameLabel = UILabel()
+    
+    
     weak var listener: UserPresentableListener?
+    
+    
+    
+}
+
+extension UserViewController: PanModalPresentable {
+    var panScrollable: UIScrollView? {
+        nil
+    }
+    var shortFormHeight: PanModalHeight {
+        .contentHeight(UIScreen.main.bounds.height * 0.66)
+    }
 }
