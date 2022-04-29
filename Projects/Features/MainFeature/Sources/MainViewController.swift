@@ -31,11 +31,17 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     }
     private let logoImageView = UIImageView(image: CoreAsset.Images.grigLogo.image.withRenderingMode(.alwaysOriginal))
     private let helpButton = UIButton().then {
-        $0.setImage(.init(systemName: "questionmark.circle.fill"), for: .normal)
-        $0.tintColor = .init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6)
+        $0.setImage(
+            .init(
+                systemName: "questionmark.circle.fill")?
+                .tintColor(.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6))
+                .downSample(size: .init(width: 30, height: 30)
+            ),
+            for: .normal
+        )
     }
     private let sortButton = UIButton().then {
-        $0.setTitle("contributions | All", for: .normal)
+        $0.setTitle("contributions | All ", for: .normal)
         $0.setTitleColor(.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6), for: .normal)
         $0.setImage(.init(systemName: "chevron.down"), for: .normal)
         $0.tintColor = .init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6)
@@ -62,7 +68,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     
     // MARK: - UI
     override func addView() {
-        view.addSubviews(rankTableView, logoImageView, helpButton, sortButton)
+        view.addSubviews(logoImageView, helpButton, sortButton, rankTableView)
     }
     override func setLayout() {
         logoImageView.snp.makeConstraints {
@@ -80,7 +86,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             $0.leading.trailing.bottom.equalToSuperview()
         }
         sortButton.snp.makeConstraints {
-            $0.trailing.equalTo(rankTableView.snp.trailing).inset(20)
+            $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(rankTableView.snp.top).offset(-8)
         }
     }
