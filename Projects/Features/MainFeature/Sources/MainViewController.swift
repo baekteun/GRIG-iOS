@@ -34,7 +34,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.setImage(
             .init(
                 systemName: "questionmark.circle.fill")?
-                .tintColor(.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6))
+                .tintColor(CoreAsset.Colors.girgGray.color)
                 .downSample(size: .init(width: 30, height: 30)
             ),
             for: .normal
@@ -42,9 +42,9 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     }
     private let sortButton = UIButton().then {
         $0.setTitle("contributions | All ", for: .normal)
-        $0.setTitleColor(.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6), for: .normal)
+        $0.setTitleColor(CoreAsset.Colors.girgGray.color, for: .normal)
         $0.setImage(.init(systemName: "chevron.down"), for: .normal)
-        $0.tintColor = .init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.6)
+        $0.tintColor = CoreAsset.Colors.girgGray.color
         $0.semanticContentAttribute = .forceRightToLeft
     }
 
@@ -59,11 +59,6 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             rankTableView.isHidden = true
             rankCollectionView.isHidden = false
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        bindPresenter()
     }
     
     // MARK: - UI
@@ -111,6 +106,11 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
 extension MainViewController {
     var viewWillAppearTrigger: Observable<Void> {
         self.rx.viewWillAppear.asObservable()
+    }
+    var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> {
+        self.rankTableView.rx.modelSelected((Criteria, GRIGAPI.GrigEntityQuery.Data.Ranking).self)
+            .map(\.1)
+            .asObservable()
     }
 }
 

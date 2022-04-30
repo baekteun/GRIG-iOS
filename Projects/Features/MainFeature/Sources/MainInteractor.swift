@@ -15,6 +15,7 @@ public protocol MainRouting: ViewableRouting {
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
     var viewWillAppearTrigger: Observable<Void> { get }
+    var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -45,6 +46,20 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 
     override func didBecomeActive() {
         super.didBecomeActive()
+        bindPresenter()
+    }
+
+    override func willResignActive() {
+        super.willResignActive()
+    }
+}
+
+extension MainInteractor {
+    var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
+}
+
+private extension MainInteractor {
+    func bindPresenter() {
         presenter.viewWillAppearTrigger
             .withUnretained(self)
             .flatMap({ owner, _ in
@@ -61,13 +76,11 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
             .map { [RankTableSection(items: $0)] }
             .bind(to: rankingListSectionRelay)
             .disposeOnDeactivate(interactor: self)
+        
+        presenter.userDidSelected
+            .bind { user in
+                print(user)
+            }
+            .disposeOnDeactivate(interactor: self)
     }
-
-    override func willResignActive() {
-        super.willResignActive()
-    }
-}
-
-extension MainInteractor {
-    var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
 }
