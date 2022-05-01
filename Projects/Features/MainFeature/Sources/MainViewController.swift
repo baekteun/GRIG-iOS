@@ -23,12 +23,6 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.backgroundColor = .clear
         $0.separatorStyle = .none
     }
-    private let rankCollectionView = UICollectionView(frame: .zero, collectionViewLayout: .init()).then {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        $0.isHidden = true
-        $0.register(cellType: RankCollectionCell.self)
-    }
     private let logoImageView = UIImageView(image: CoreAsset.Images.grigLogo.image.withRenderingMode(.alwaysOriginal))
     private let helpButton = UIButton().then {
         $0.setImage(
@@ -48,17 +42,6 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.semanticContentAttribute = .forceRightToLeft
     }
     weak var listener: MainPresentableListener?
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        if UIDevice.current.orientation == .portrait {
-            rankTableView.isHidden = false
-            rankCollectionView.isHidden = true
-        } else if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
-            rankTableView.isHidden = true
-            rankCollectionView.isHidden = false
-        }
-    }
     
     // MARK: - UI
     override func addView() {
