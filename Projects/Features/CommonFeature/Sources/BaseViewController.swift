@@ -18,6 +18,10 @@ open class BaseViewController: UIViewController {
         configureVC()
     }
     
+    deinit{
+        print("\(type(of: self)): \(#function)")
+    }
+    
     @available(*, unavailable)
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
