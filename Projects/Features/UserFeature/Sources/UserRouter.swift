@@ -25,3 +25,9 @@ final class UserRouter: ViewableRouter<UserInteractable, UserViewControllable>, 
         interactor.router = self
     }
 }
+
+extension UserRouter {
+    func openGithubProfile(url: String) {
+        viewControllable.openSafariWithUrl(url: url)
+    }
+}

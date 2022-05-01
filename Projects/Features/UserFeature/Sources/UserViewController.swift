@@ -49,13 +49,15 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.numberOfLines = 0
     }
     private let githubButton = GithubButton()
+    private let user: GRIGAPI.GrigEntityQuery.Data.Ranking
     
     weak var listener: UserPresentableListener?
     
     // MARK: - Init
     init(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
+        self.user = user
         super.init()
-        setUpUser(user: user)
+        setUpUser()
     }
     
     // MARK: - UI
@@ -134,11 +136,17 @@ extension UserViewController {
         self.rx.viewWillDisAppear
             .asObservable()
     }
+    var githubButtonDidTap: Observable<String> {
+        self.githubButton.rx.tap
+            .asObservable()
+            .compactMap { [weak self] _ in self?.user.nickname }
+            .map { "https://github.com/\($0)" }
+    }
 }
 
 // MARK: - Method
 private extension UserViewController {
-    func setUpUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
+    func setUpUser() {
         userProfileImageView.kf.setImage(with: URL(string: user.avatarUrl ?? "") ?? .none,
                                          placeholder: UIImage(),
                                          options: [])

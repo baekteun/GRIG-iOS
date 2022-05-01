@@ -10,13 +10,14 @@ import RIBs
 import RxSwift
 
 public protocol UserRouting: ViewableRouting {
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
+    func openGithubProfile(url: String)
 }
 
 protocol UserPresentable: Presentable {
     var listener: UserPresentableListener? { get set }
     
     var viewWillDisAppearTrigger: Observable<Void> { get }
+    var githubButtonDidTap: Observable<String> { get }
 }
 
 public protocol UserListener: AnyObject {
@@ -51,6 +52,12 @@ private extension UserInteractor {
         presenter.viewWillDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachUserRIB()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.githubButtonDidTap
+            .bind(with: self) { owner, url in
+                owner.router?.openGithubProfile(url: url)
             }
             .disposeOnDeactivate(interactor: self)
     }
