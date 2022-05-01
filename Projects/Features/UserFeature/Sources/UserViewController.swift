@@ -41,6 +41,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.axis = .horizontal
         $0.spacing = 40
     }
+    private let githubButton = GithubButton()
     
     weak var listener: UserPresentableListener?
     
@@ -53,7 +54,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     // MARK: - UI
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
-        view.addSubviews(userProfileImageView, nameLabel, nicknameLabel, statStackView)
+        view.addSubviews(userProfileImageView, nameLabel, nicknameLabel, statStackView, githubButton)
     }
     override func setLayout() {
         userProfileImageView.snp.makeConstraints {
@@ -80,6 +81,11 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         statStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(20)
+        }
+        githubButton.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(34)
+            $0.height.equalTo(60)
+            $0.bottom.equalToSuperview().inset(40)
         }
     }
     override func configureVC() {
