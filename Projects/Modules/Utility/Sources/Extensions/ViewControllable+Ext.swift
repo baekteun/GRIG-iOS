@@ -20,7 +20,9 @@ public extension ViewControllable {
         self.uiviewController.presentPanModal(viewController.uiviewController as! (PanModalPresentable & UIViewController))
     }
     func dismiss(animated : Bool, completion: (() -> Void)?) {
-        self.uiviewController.dismiss(animated: animated, completion: completion)
+        if self.uiviewController.isPanModalPresented {
+            self.uiviewController.dismiss(animated: animated, completion: completion)            
+        }
     }
     func presentAlert(
         title: String?,
