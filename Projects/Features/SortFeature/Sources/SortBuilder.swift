@@ -9,7 +9,7 @@
 import RIBs
 import Utility
 
-protocol SortDependency: Dependency {
+public protocol SortDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -21,17 +21,17 @@ final class SortComponent: Component<SortDependency> {
 
 // MARK: - Builder
 
-protocol SortBuildable: Buildable {
+public protocol SortBuildable: Buildable {
     func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting
 }
 
-final class SortBuilder: Builder<SortDependency>, SortBuildable {
+public final class SortBuilder: Builder<SortDependency>, SortBuildable {
 
-    override init(dependency: SortDependency) {
+    public override init(dependency: SortDependency) {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting {
+    public func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting {
         let component = SortComponent(dependency: dependency)
         let viewController = SortViewController()
         let interactor = SortInteractor(presenter: viewController)
