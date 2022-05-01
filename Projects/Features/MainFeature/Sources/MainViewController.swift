@@ -108,6 +108,6 @@ extension MainViewController {
     func CustomPresent(_ viewController: ViewControllable) {
         viewController.uiviewController.modalPresentationStyle = .fullScreen
         viewController.uiviewController.modalTransitionStyle = .crossDissolve
-        self.present(viewController, animated: true, completion: nil)
+        self.topViewControllable.present(viewController, animated: true, completion: nil)
     }
 }
