@@ -26,6 +26,7 @@ public enum CoreAsset {
     public static let grigWhite = CoreColors(name: "GRIG_White")
   }
   public enum Images {
+    public static let grigGithubIcon = CoreImages(name: "GRIG_GithubIcon")
     public static let grigLogo = CoreImages(name: "GRIG_Logo")
   }
 }
