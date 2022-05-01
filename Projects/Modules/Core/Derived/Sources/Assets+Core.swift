@@ -18,6 +18,7 @@
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum CoreAsset {
   public enum Colors {
+    public static let girgGray = CoreColors(name: "GIRG_Gray")
     public static let grigBackground = CoreColors(name: "GRIG_Background")
     public static let grigPrimary = CoreColors(name: "GRIG_Primary")
     public static let grigPrimaryTextColor = CoreColors(name: "GRIG_PrimaryTextColor")
