@@ -99,6 +99,9 @@ extension MainViewController {
         self.rankTableView.rx.reachedBottom(offset: 120)
             .asObservable()
     }
+    var helpButtonDidTap: Observable<Void> {
+        self.helpButton.rx.tap.asObservable()
+    }
 }
 
 extension MainViewController {

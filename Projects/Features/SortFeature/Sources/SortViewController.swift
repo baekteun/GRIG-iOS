@@ -9,6 +9,9 @@
 import RIBs
 import RxSwift
 import UIKit
+import CommonFeature
+import Then
+import SnapKit
 
 protocol SortPresentableListener: AnyObject {
     // TODO: Declare properties and methods that the view controller can invoke to perform
@@ -16,7 +19,31 @@ protocol SortPresentableListener: AnyObject {
     // interactor class.
 }
 
-final class SortViewController: UIViewController, SortPresentable, SortViewControllable {
-
+final class SortViewController: BaseViewController, SortPresentable, SortViewControllable {
+    // MARK: - Properties
+    private let sortView = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 20
+    }
+    private let criteriaPicker = UIPickerView()
+    private let generationPicker = UIPickerView()
+    private let completeButton = UIButton()
+    
     weak var listener: SortPresentableListener?
+    
+    // MARK: - UI
+    override func addView() {
+        view.addSubviews(sortView)
+        sortView.addSubviews(criteriaPicker, generationPicker, completeButton)
+    }
+    override func setLayout() {
+        sortView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.height.equalTo(295)
+            $0.width.equalTo(312)
+        }
+    }
+    override func configureVC() {
+        view.backgroundColor = .white.withAlphaComponent(0.25)
+    }
 }

@@ -57,4 +57,18 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
      func detachSort() {
          
      }
+     func presentActionSheet() {
+         viewControllable.presentAlert(title: "GRIG", message: "Github Rank In GSM", style: .actionSheet, actions: [
+            .init(title: "Join", style: .default, handler: { [weak self] _ in
+                
+            }),
+            .init(title: "Open API", style: .default, handler: { [weak self] _ in
+                
+            }),
+            .init(title: "About", style: .default, handler: { [weak self] _ in
+                
+            }),
+            .init(title: "Cancel", style: .cancel, handler: nil)
+         ])
+     }
 }

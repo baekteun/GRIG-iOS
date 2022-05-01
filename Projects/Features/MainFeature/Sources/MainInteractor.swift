@@ -13,12 +13,14 @@ public protocol MainRouting: ViewableRouting {
     func detachUser()
     func attachSort(closure: ((Criteria, Int) -> Void))
     func detachSort()
+    func presentActionSheet()
 }
 
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> { get }
     var nextPageTrigger: Observable<Void> { get }
+    var helpButtonDidTap: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -109,6 +111,11 @@ private extension MainInteractor {
             .bind(to: rankingListSectionRelay)
             .disposeOnDeactivate(interactor: self)
         
+        presenter.helpButtonDidTap
+            .bind(with: self) { owner, _ in
+                owner.router?.presentActionSheet()
+            }
+            .disposeOnDeactivate(interactor: self)
     }
     
 }
