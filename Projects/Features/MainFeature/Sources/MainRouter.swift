@@ -9,6 +9,8 @@
 import RIBs
 import UserFeature
 import Domain
+import PanModal
+import UIKit
 
 protocol MainInteractable: Interactable, UserListener {
     var router: MainRouting? { get set }
@@ -35,10 +37,17 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
     }
 }
 
-extension MainRouter {
-    func attachUserBuilder(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
+ extension MainRouter {
+    func attachUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
         let router = userBuilder.build(withListener: interactor, user: user)
         userRouter = router
         attachChild(router)
+        viewControllable.presentPanModal(router.viewControllable)
     }
+     func detachUser() {
+         guard let router = userRouter else { return }
+         viewController.dismiss(animated: true, completion: nil)
+         detachChild(router)
+         userRouter = nil
+     }
 }

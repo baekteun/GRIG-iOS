@@ -9,7 +9,8 @@ import InjectManager
 import ThirdPartyLib
 
 public protocol MainRouting: ViewableRouting {
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
+    func attachUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking)
+    func detachUser()
 }
 
 protocol MainPresentable: Presentable {
@@ -55,6 +56,12 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
 }
 
 extension MainInteractor {
+    func detachUserRIB() {
+        router?.detachUser()
+    }
+}
+
+extension MainInteractor {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
 }
 
@@ -78,9 +85,9 @@ private extension MainInteractor {
             .disposeOnDeactivate(interactor: self)
         
         presenter.userDidSelected
-            .bind { user in
-                print(user)
-            }
+            .bind(with: self, onNext: { owner, user in
+                owner.router?.attachUser(user: user)
+            })
             .disposeOnDeactivate(interactor: self)
     }
 }

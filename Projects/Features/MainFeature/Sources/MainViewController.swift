@@ -47,7 +47,6 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.tintColor = CoreAsset.Colors.girgGray.color
         $0.semanticContentAttribute = .forceRightToLeft
     }
-
     weak var listener: MainPresentableListener?
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -96,6 +95,9 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             cell.model = (ip.row+1, item.0, item.1)
             return cell
         }
+        
+        self.rankTableView.delegate = nil
+        self.rankTableView.dataSource = nil
         
         listener?.rankingListSection
             .bind(to: rankTableView.rx.items(dataSource: rankTableDS))
