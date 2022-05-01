@@ -60,10 +60,10 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
      func presentActionSheet() {
          viewControllable.presentAlert(title: "GRIG", message: "Github Rank In GSM", style: .actionSheet, actions: [
             .init(title: "Join", style: .default, handler: { [weak self] _ in
-                
+                self?.viewControllable.openSafariWithUrl(url: "https://github.com/login/oauth/authorize?client_id=685ffb52e4dd768b3f66&redirect_uri=https://d6ui2fy5uj.execute-api.ap-northeast-2.amazonaws.com/api/auth&scope=user:email")
             }),
             .init(title: "Open API", style: .default, handler: { [weak self] _ in
-                
+                self?.viewControllable.openSafariWithUrl(url: "https://github.com/GRI-G/GRIG-API")
             }),
             .init(title: "About", style: .default, handler: { [weak self] _ in
                 
