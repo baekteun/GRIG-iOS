@@ -7,6 +7,7 @@
 //
 
 import RIBs
+import Utility
 
 protocol SortDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
@@ -21,7 +22,7 @@ final class SortComponent: Component<SortDependency> {
 // MARK: - Builder
 
 protocol SortBuildable: Buildable {
-    func build(withListener listener: SortListener) -> SortRouting
+    func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting
 }
 
 final class SortBuilder: Builder<SortDependency>, SortBuildable {
@@ -30,7 +31,7 @@ final class SortBuilder: Builder<SortDependency>, SortBuildable {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: SortListener) -> SortRouting {
+    func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting {
         let component = SortComponent(dependency: dependency)
         let viewController = SortViewController()
         let interactor = SortInteractor(presenter: viewController)
