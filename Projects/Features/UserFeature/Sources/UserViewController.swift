@@ -123,10 +123,10 @@ extension UserViewController: PanModalPresentable {
         nil
     }
     var shortFormHeight: PanModalHeight {
-        .contentHeight(bounds.height * 0.66)
+        .contentHeight(bounds.height > 800 ? bounds.height * 0.67 : bounds.height * 0.76)
     }
     var longFormHeight: PanModalHeight {
-        .contentHeight(bounds.height * 0.66)
+        .contentHeight(bounds.height > 800 ? bounds.height * 0.67 : bounds.height * 0.76)
     }
 }
 
