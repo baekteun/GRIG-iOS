@@ -11,9 +11,13 @@ public extension ViewControllable {
         self.uiviewController.present(viewControllable.uiviewController, animated: animated, completion: completion)
     }
     func presentPanModal(
-        _ viewController: UIViewController & PanModalPresentable
+        _ viewController: ViewControllable
     ) {
-        self.uiviewController.presentPanModal(viewController)
+        guard viewController.uiviewController is PanModalPresentable
+        else {
+            return
+        }
+        self.uiviewController.presentPanModal(viewController.uiviewController as! (PanModalPresentable & UIViewController))
     }
     func dismiss(animated : Bool, completion: (() -> Void)?) {
         self.uiviewController.dismiss(animated: animated, completion: completion)
