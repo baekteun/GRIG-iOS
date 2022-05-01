@@ -35,7 +35,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         )
     }
     private let sortButton = UIButton().then {
-        $0.setTitle("contributions | All ", for: .normal)
+        $0.setTitle("contributions ⏐ All ", for: .normal)
         $0.setTitleColor(CoreAsset.Colors.girgGray.color, for: .normal)
         $0.setImage(.init(systemName: "chevron.down"), for: .normal)
         $0.tintColor = CoreAsset.Colors.girgGray.color
