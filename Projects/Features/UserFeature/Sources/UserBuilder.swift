@@ -33,7 +33,7 @@ public final class UserBuilder: Builder<UserDependency>, UserBuildable {
 
     public func build(withListener listener: UserListener, user: GRIGAPI.GrigEntityQuery.Data.Ranking) -> UserRouting {
         _ = UserComponent(dependency: dependency)
-        let viewController = UserViewController()
+        let viewController = UserViewController(user: user)
         let interactor = UserInteractor(presenter: viewController)
         interactor.listener = listener
         return UserRouter(interactor: interactor, viewController: viewController)
