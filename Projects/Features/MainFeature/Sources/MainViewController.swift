@@ -89,12 +89,13 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
 }
 
 extension MainViewController {
-    var viewWillAppearTrigger: Observable<Void> {
-        self.rx.viewWillAppear.asObservable()
-    }
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> {
         self.rankTableView.rx.modelSelected((Criteria, GRIGAPI.GrigEntityQuery.Data.Ranking).self)
             .map(\.1)
+            .asObservable()
+    }
+    var nextPageTrigger: Observable<Void> {
+        self.rankTableView.rx.reachedBottom(offset: 120)
             .asObservable()
     }
 }

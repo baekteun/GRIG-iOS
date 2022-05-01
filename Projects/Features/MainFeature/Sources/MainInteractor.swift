@@ -15,8 +15,8 @@ public protocol MainRouting: ViewableRouting {
 
 protocol MainPresentable: Presentable {
     var listener: MainPresentableListener? { get set }
-    var viewWillAppearTrigger: Observable<Void> { get }
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> { get }
+    var nextPageTrigger: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -67,27 +67,43 @@ extension MainInteractor {
 
 private extension MainInteractor {
     func bindPresenter() {
-        presenter.viewWillAppearTrigger
-            .withUnretained(self)
-            .flatMap({ owner, _ in
-                owner.fetchRankingListUseCase.execute(
-                    criteria: owner.criteria,
-                    count: 30,
-                    page: owner.page,
-                    generation: owner.generation
-                )
-            })
-            .map { [weak self] entity in
-                entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
-            }
-            .map { [RankTableSection(items: $0)] }
-            .bind(to: rankingListSectionRelay)
-            .disposeOnDeactivate(interactor: self)
+        fetchRankingListUseCase.execute(
+            criteria: criteria,
+            count: 30,
+            page: page,
+            generation: generation
+        ).map { [weak self] entity in
+            entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
+        }
+        .map { [RankTableSection(items: $0)] }
+        .asObservable()
+        .bind(to: rankingListSectionRelay)
+        .disposeOnDeactivate(interactor: self)
         
         presenter.userDidSelected
             .bind(with: self, onNext: { owner, user in
                 owner.router?.attachUser(user: user)
             })
             .disposeOnDeactivate(interactor: self)
+        
+        presenter.nextPageTrigger
+            .withUnretained(self)
+            .do(onNext: { owner, _ in
+                owner.page += 1
+            }).flatMap({ owner, _ in
+                owner.fetchRankingListUseCase.execute(
+                    criteria: owner.criteria,
+                    count: 30,
+                    page: owner.page,
+                    generation: owner.generation
+                )
+            }).withUnretained(self)
+            .map { owner, item in
+                item.map { (owner.criteria, $0 ?? .init()) }
+            }.map { [RankTableSection(items: $0)] }
+            .map { [weak self] in (self?.rankingListSectionRelay.value ?? []) + $0 }
+            .bind(to: rankingListSectionRelay)
+            .disposeOnDeactivate(interactor: self)
     }
+    
 }
