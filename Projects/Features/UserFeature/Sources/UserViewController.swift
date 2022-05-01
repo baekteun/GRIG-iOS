@@ -41,6 +41,13 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.axis = .horizontal
         $0.spacing = 40
     }
+    private let bioView = UIView().then {
+        $0.backgroundColor = CoreAsset.Colors.grigWhite.color
+        $0.layer.cornerRadius = 8
+    }
+    private let bioLabel = UILabel().then {
+        $0.numberOfLines = 0
+    }
     private let githubButton = GithubButton()
     
     weak var listener: UserPresentableListener?
@@ -54,7 +61,8 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     // MARK: - UI
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
-        view.addSubviews(userProfileImageView, nameLabel, nicknameLabel, statStackView, githubButton)
+        view.addSubviews(userProfileImageView, nameLabel, nicknameLabel, statStackView, bioView, githubButton)
+        bioView.addSubviews(bioLabel)
     }
     override func setLayout() {
         userProfileImageView.snp.makeConstraints {
@@ -86,6 +94,16 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.leading.trailing.equalToSuperview().inset(34)
             $0.height.equalTo(60)
             $0.bottom.equalToSuperview().inset(40)
+        }
+        bioView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(34)
+            $0.top.equalTo(statStackView.snp.bottom).offset(24)
+            $0.bottom.equalTo(githubButton.snp.top).offset(-12)
+            $0.height.greaterThanOrEqualTo(70)
+        }
+        bioLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
     override func configureVC() {
@@ -129,5 +147,6 @@ private extension UserViewController {
         followStatView.setStatValue(value: user.following ?? 0)
         followerStatView.setStatValue(value: user.followers ?? 0)
         commitStatView.setStatValue(value: user.contributions ?? 0)
+        bioLabel.text = user.bio
     }
 }

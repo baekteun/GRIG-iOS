@@ -10,6 +10,7 @@ final class GithubButton: UIButton {
         $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
         $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
+    private let rightChevronImage = UIImageView(image: .init(systemName: "chevron.right")?.tintColor(CoreAsset.Colors.grigPrimaryTextColor.color))
     
     // MARK: - Init
     init() {
@@ -27,7 +28,7 @@ final class GithubButton: UIButton {
 // MARK: - UI
 private extension GithubButton {
     func addView() {
-        addSubviews(githubIconImage, githubLabel)
+        addSubviews(githubIconImage, githubLabel, rightChevronImage)
     }
     func setLayout() {
         githubIconImage.snp.makeConstraints {
@@ -36,6 +37,10 @@ private extension GithubButton {
         }
         githubLabel.snp.makeConstraints {
             $0.leading.equalTo(githubIconImage.snp.trailing).offset(15)
+            $0.centerY.equalToSuperview()
+        }
+        rightChevronImage.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-24)
             $0.centerY.equalToSuperview()
         }
     }
