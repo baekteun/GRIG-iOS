@@ -23,11 +23,11 @@ final class RankTableCell: BaseTableViewCell<(Int, Criteria, GRIGAPI.GrigEntityQ
         $0.layer.cornerRadius = 22.5
         $0.clipsToBounds = true
     }
-    private let nameLabel = UILabel().then {
+    private let nicknameLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
     }
-    private let nicknameLabel = UILabel().then {
+    private let nameLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .regular)
         $0.textColor = CoreAsset.Colors.grigSecondaryTextColor.color
     }
@@ -45,7 +45,7 @@ final class RankTableCell: BaseTableViewCell<(Int, Criteria, GRIGAPI.GrigEntityQ
     // MARK: - UI
     override func addView() {
         contentView.addSubviews(view)
-        view.addSubviews(rankLabel, avatarImageView, nicknameLabel, nameLabel, resultLabel)
+        view.addSubviews(rankLabel, avatarImageView, nameLabel, nicknameLabel, resultLabel)
     }
     override func setLayout() {
         view.snp.makeConstraints {
@@ -61,13 +61,13 @@ final class RankTableCell: BaseTableViewCell<(Int, Criteria, GRIGAPI.GrigEntityQ
             $0.centerY.equalToSuperview()
             $0.size.equalTo(45)
         }
-        nameLabel.snp.makeConstraints {
+        nicknameLabel.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(15)
             $0.bottom.equalTo(contentView.snp.centerY)
         }
-        nicknameLabel.snp.makeConstraints {
+        nameLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.centerY)
-            $0.leading.equalTo(nameLabel)
+            $0.leading.equalTo(nicknameLabel)
         }
         resultLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-20)
@@ -84,8 +84,8 @@ final class RankTableCell: BaseTableViewCell<(Int, Criteria, GRIGAPI.GrigEntityQ
         avatarImageView.kf.setImage(with: URL(string: entity.avatarUrl ?? ""),
                                     placeholder: UIImage(),
                                     options: [])
-        nicknameLabel.text = entity.nickname
-        nameLabel.text = "\(entity.name ?? "") (\(entity.generation ?? 0)기)"
+        nameLabel.text = entity.name
+        nicknameLabel.text = "\(entity.nickname ?? "") (\(entity.generation ?? 0)기)"
         var res = 0
         switch model.1 {
         case .contributions:

@@ -11,13 +11,14 @@ import UserFeature
 import Domain
 import PanModal
 import UIKit
+import Utility
 
 protocol MainInteractable: Interactable, UserListener {
     var router: MainRouting? { get set }
     var listener: MainListener? { get set }
 }
 protocol MainViewControllable: ViewControllable {
-    // TODO: Declare methods the router invokes to manipulate the view hierarchy.
+    func CustomPresent(_ viewController: ViewControllable)
 }
 
 final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, MainRouting {
@@ -49,5 +50,11 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          viewController.dismiss(animated: true, completion: nil)
          detachChild(router)
          userRouter = nil
+     }
+     func attachSort(closure: ((Criteria, Int) -> Void)) {
+         
+     }
+     func detachSort() {
+         
      }
 }

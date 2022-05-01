@@ -11,6 +11,8 @@ import ThirdPartyLib
 public protocol MainRouting: ViewableRouting {
     func attachUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking)
     func detachUser()
+    func attachSort(closure: ((Criteria, Int) -> Void))
+    func detachSort()
 }
 
 protocol MainPresentable: Presentable {
@@ -75,6 +77,7 @@ private extension MainInteractor {
         ).map { [weak self] entity in
             entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
         }
+        .catchAndReturn([])
         .map { [RankTableSection(items: $0)] }
         .asObservable()
         .bind(to: rankingListSectionRelay)
@@ -97,13 +100,15 @@ private extension MainInteractor {
                     page: owner.page,
                     generation: owner.generation
                 )
-            }).withUnretained(self)
-            .map { owner, item in
-                item.map { (owner.criteria, $0 ?? .init()) }
-            }.map { [RankTableSection(items: $0)] }
-            .map { [weak self] in (self?.rankingListSectionRelay.value ?? []) + $0 }
+            }).map { [weak self] entity in
+                entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
+            }
+            .catchAndReturn([])
+            .map { [RankTableSection(items: $0)] }
+            .map { [weak self] added in (self?.rankingListSectionRelay.value ?? []) + added }
             .bind(to: rankingListSectionRelay)
             .disposeOnDeactivate(interactor: self)
+        
     }
     
 }

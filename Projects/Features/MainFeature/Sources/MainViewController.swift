@@ -42,6 +42,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.semanticContentAttribute = .forceRightToLeft
     }
     weak var listener: MainPresentableListener?
+    private var page: Int = 0
     
     // MARK: - UI
     override func addView() {
@@ -73,14 +74,14 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     
     // MARK: - Binding
     override func bindPresenter() {
-        let rankTableDS = RxTableViewSectionedReloadDataSource<RankTableSection> { ds, tv, ip, item in
-            let cell = tv.dequeueReusableCell(for: ip, cellType: RankTableCell.self)
-            cell.model = (ip.row+1, item.0, item.1)
-            return cell
-        }
-        
         self.rankTableView.delegate = nil
         self.rankTableView.dataSource = nil
+        
+        let rankTableDS = RxTableViewSectionedReloadDataSource<RankTableSection> {  _, tv, ip, item in
+            let cell = tv.dequeueReusableCell(for: ip, cellType: RankTableCell.self)
+            cell.model = (ip.row + 1 + ip.section * 30, item.0, item.1)
+            return cell
+        }
         
         listener?.rankingListSection
             .bind(to: rankTableView.rx.items(dataSource: rankTableDS))
@@ -100,3 +101,10 @@ extension MainViewController {
     }
 }
 
+extension MainViewController {
+    func CustomPresent(_ viewController: ViewControllable) {
+        viewController.uiviewController.modalPresentationStyle = .fullScreen
+        viewController.uiviewController.modalTransitionStyle = .crossDissolve
+        self.present(viewController, animated: true, completion: nil)
+    }
+}
