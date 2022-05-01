@@ -93,4 +93,8 @@ public extension ViewControllable {
         }
         return top
     }
+    func openSafariWithUrl(url: String) {
+        guard let url = URL(string: url) else { return }
+        UIApplication.shared.open(url)
+    }
 }
