@@ -76,19 +76,7 @@ extension MainInteractor {
 
 private extension MainInteractor {
     func bindPresenter() {
-        fetchRankingListUseCase.execute(
-            criteria: criteria,
-            count: count,
-            page: page,
-            generation: generation
-        ).map { [weak self] entity in
-            entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
-        }
-        .catchAndReturn([])
-        .map { [RankTableSection(items: $0)] }
-        .asObservable()
-        .bind(to: rankingListSectionRelay)
-        .disposeOnDeactivate(interactor: self)
+        initialFetch()
         
         presenter.userDidSelected
             .bind(with: self, onNext: { owner, user in
@@ -125,11 +113,28 @@ private extension MainInteractor {
         presenter.sortButtonDidTap
             .bind(with: self) { owner, _ in
                 owner.router?.attachSort(closure: { criteria, generation in
+                    owner.rankingListSectionRelay.accept([])
+                    owner.page = 1
                     owner.criteria = criteria
                     owner.generation = generation
+                    owner.initialFetch()
                 })
             }
             .disposeOnDeactivate(interactor: self)
     }
-    
+    func initialFetch() {
+        fetchRankingListUseCase.execute(
+            criteria: criteria,
+            count: count,
+            page: page,
+            generation: generation
+        ).map { [weak self] entity in
+            entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
+        }
+        .catchAndReturn([])
+        .map { [RankTableSection(items: $0)] }
+        .asObservable()
+        .bind(to: rankingListSectionRelay)
+        .disposeOnDeactivate(interactor: self)
+    }
 }
