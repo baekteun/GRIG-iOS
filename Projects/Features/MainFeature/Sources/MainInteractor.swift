@@ -23,6 +23,7 @@ protocol MainPresentable: Presentable {
     var nextPageTrigger: Observable<Void> { get }
     var helpButtonDidTap: Observable<Void> { get }
     var sortButtonDidTap: Observable<Void> { get }
+    var refreshTrigger: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -39,8 +40,10 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     private var page = 1
     private var generation = 0
     
-    private var rankingListSectionRelay = BehaviorRelay<[RankTableSection]>(value: [])
-    private var sortRelay = BehaviorRelay<(Criteria, Int)>(value: (Criteria.contributions, 0))
+    private let rankingListSectionRelay = BehaviorRelay<[RankTableSection]>(value: [])
+    private let sortRelay = BehaviorRelay<(Criteria, Int)>(value: (Criteria.contributions, 0))
+    private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let isRefreshingRelay = BehaviorRelay<Bool>(value: false)
     
     private let fetchRankingListUseCase: FetchRankingListUseCase
     
@@ -77,12 +80,17 @@ extension MainInteractor {
 
 extension MainInteractor {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
-    var sort: BehaviorRelay<(Criteria, Int)> { sortRelay}
+    var sort: BehaviorRelay<(Criteria, Int)> { sortRelay }
+    var isLoading: BehaviorRelay<Bool>  { isLoadingRelay }
+    var isRefreshing: BehaviorRelay<Bool> { isRefreshingRelay }
 }
 
 private extension MainInteractor {
     func bindPresenter() {
-        initialFetch()
+        let isLoadingIndicator = ActivityIndicator()
+        let isRefreshingIndicator = ActivityIndicator()
+        
+        initialFetch(tracking: isLoadingIndicator)
         
         presenter.userDidSelected
             .bind(with: self, onNext: { owner, user in
@@ -100,7 +108,7 @@ private extension MainInteractor {
                     count: owner.count,
                     page: owner.page,
                     generation: owner.generation
-                )
+                ).trackActivity(isLoadingIndicator)
             }).map { [weak self] entity in
                 entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
             }
@@ -124,18 +132,38 @@ private extension MainInteractor {
                     owner.page = 1
                     owner.criteria = criteria
                     owner.generation = generation
-                    owner.initialFetch()
+                    owner.initialFetch(tracking: isLoadingIndicator)
                 })
             }
             .disposeOnDeactivate(interactor: self)
+        
+        presenter.refreshTrigger
+            .bind(with: self) { owner, _ in
+                owner.rankingListSectionRelay.accept([])
+                owner.page = 1
+                owner.initialFetch(tracking: isRefreshingIndicator)
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        isLoadingIndicator
+            .asObservable()
+            .bind(to: isLoadingRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        isRefreshingIndicator
+            .asObservable()
+            .bind(to: isRefreshingRelay)
+            .disposeOnDeactivate(interactor: self)
     }
-    func initialFetch() {
+    private func initialFetch(tracking: ActivityIndicator) {
         fetchRankingListUseCase.execute(
             criteria: criteria,
             count: count,
             page: page,
             generation: generation
-        ).map { [weak self] entity in
+        )
+        .trackActivity(tracking)
+        .map { [weak self] entity in
             entity.map { (self?.criteria ?? .contributions, $0 ?? .init()) }
         }
         .catchAndReturn([])

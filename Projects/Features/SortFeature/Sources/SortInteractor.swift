@@ -95,6 +95,7 @@ private extension SortInteractor {
             .disposeOnDeactivate(interactor: self)
         
         fetchGenerationListUseCase.execute()
+            .catchAndReturn([])
             .asObservable()
             .map { [GRIGAPI.GrigGenerationQuery.Data.Generation(_id: 0)] + $0 }
             .bind(to: generationListRelay)

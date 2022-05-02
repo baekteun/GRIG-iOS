@@ -20,11 +20,11 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.layer.cornerRadius = 35
         $0.clipsToBounds = true
     }
-    private let nameLabel = UILabel().then {
+    private let nicknameLabel = UILabel().then {
         $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
         $0.font = .systemFont(ofSize: 26, weight: .bold)
     }
-    private let nicknameLabel = UILabel().then {
+    private let nameLabel = UILabel().then {
         $0.textColor = CoreAsset.Colors.grigSecondaryTextColor.color
         $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
@@ -63,7 +63,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     // MARK: - UI
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
-        view.addSubviews(userProfileImageView, nameLabel, nicknameLabel, statStackView, bioView, githubButton)
+        view.addSubviews(userProfileImageView, nicknameLabel, nameLabel, statStackView, bioView, githubButton)
         bioView.addSubviews(bioLabel)
     }
     override func setLayout() {
@@ -72,13 +72,13 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.top.equalToSuperview().offset(45)
             $0.size.equalTo(70)
         }
-        nameLabel.snp.makeConstraints {
+        nicknameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(userProfileImageView.snp.bottom)
         }
-        nicknameLabel.snp.makeConstraints {
+        nameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(nameLabel.snp.bottom)
+            $0.top.equalTo(nicknameLabel.snp.bottom)
         }
         firstSeparatorView.snp.makeConstraints {
             $0.width.equalTo(0.25)
@@ -90,7 +90,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         }
         statStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(20)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(20)
         }
         githubButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(34)
@@ -150,8 +150,8 @@ private extension UserViewController {
         userProfileImageView.kf.setImage(with: URL(string: user.avatarUrl ?? "") ?? .none,
                                          placeholder: UIImage(),
                                          options: [])
-        nameLabel.text = "\(user.name ?? "")(\(user.generation ?? 0)기)"
-        nicknameLabel.text = user.nickname
+        nicknameLabel.text = "\(user.nickname ?? "")(\(user.generation ?? 0)기)"
+        nameLabel.text = user.name
         followStatView.setStatValue(value: user.following ?? 0)
         followerStatView.setStatValue(value: user.followers ?? 0)
         commitStatView.setStatValue(value: user.contributions ?? 0)

@@ -57,12 +57,13 @@ final class RankTableCell: BaseTableViewCell<(Int, Criteria, GRIGAPI.GrigEntityQ
             $0.centerY.equalToSuperview()
         }
         avatarImageView.snp.makeConstraints {
-            $0.leading.equalTo(rankLabel.snp.trailing).offset(20)
+            $0.leading.equalTo(rankLabel.snp.leading).offset(35)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(45)
         }
         nicknameLabel.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(15)
+            $0.trailing.greaterThanOrEqualTo(resultLabel.snp.leading)
             $0.bottom.equalTo(contentView.snp.centerY)
         }
         nameLabel.snp.makeConstraints {

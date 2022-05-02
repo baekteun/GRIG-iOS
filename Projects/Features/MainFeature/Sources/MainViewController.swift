@@ -10,14 +10,22 @@ import SnapKit
 import Domain
 import RxDataSources
 import Core
+import NVActivityIndicatorView
 
 protocol MainPresentableListener: AnyObject {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { get }
     var sort: BehaviorRelay<(Criteria, Int)> { get }
+    var isLoading: BehaviorRelay<Bool> { get }
+    var isRefreshing: BehaviorRelay<Bool> { get }
 }
 
 final class MainViewController: BaseViewController, MainPresentable, MainViewControllable {
     // MARK: - Properties
+    private let activityIndicator = NVActivityIndicatorView(
+        frame: .zero,
+        type: .pacman,
+        color: CoreAsset.Colors.grigPrimaryTextColor.color
+    )
     private let rankTableView = UITableView().then {
         $0.register(cellType: RankTableCell.self)
         $0.rowHeight = 75
@@ -42,12 +50,17 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.tintColor = CoreAsset.Colors.girgGray.color
         $0.semanticContentAttribute = .forceRightToLeft
     }
+    private let refreshControl = UIRefreshControl()
+    
     weak var listener: MainPresentableListener?
     private var page: Int = 0
     
     // MARK: - UI
+    override func setUp() {
+        rankTableView.refreshControl = self.refreshControl
+    }
     override func addView() {
-        view.addSubviews(logoImageView, helpButton, sortButton, rankTableView)
+        view.addSubviews(logoImageView, helpButton, sortButton, rankTableView, activityIndicator)
     }
     override func setLayout() {
         logoImageView.snp.makeConstraints {
@@ -67,6 +80,10 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         sortButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(rankTableView.snp.top).offset(-8)
+        }
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(50)
         }
     }
     override func configureVC() {
@@ -103,6 +120,16 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             }
             .bind(to: sortButton.rx.title())
             .disposed(by: disposeBag)
+        
+        listener?.isLoading
+            .bind(with: self, onNext: { owner, isLoading in
+                isLoading ? owner.activityIndicator.startAnimating() : owner.activityIndicator.stopAnimating()
+            })
+            .disposed(by: disposeBag)
+        
+        listener?.isRefreshing
+            .bind(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -122,7 +149,9 @@ extension MainViewController {
     var sortButtonDidTap: Observable<Void> {
         self.sortButton.rx.tap.asObservable()
     }
-    
+    var refreshTrigger: Observable<Void> {
+        self.refreshControl.rx.controlEvent(.valueChanged).asObservable()
+    }
 }
 
 extension MainViewController {
