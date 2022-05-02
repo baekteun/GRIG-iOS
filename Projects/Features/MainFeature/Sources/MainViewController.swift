@@ -13,6 +13,7 @@ import Core
 
 protocol MainPresentableListener: AnyObject {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { get }
+    var sort: BehaviorRelay<(Criteria, Int)> { get }
 }
 
 final class MainViewController: BaseViewController, MainPresentable, MainViewControllable {
@@ -73,7 +74,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     }
     
     // MARK: - Binding
-    override func bindPresenter() {
+    override func bindListener() {
         self.rankTableView.delegate = nil
         self.rankTableView.dataSource = nil
         
@@ -85,6 +86,17 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         
         listener?.rankingListSection
             .bind(to: rankTableView.rx.items(dataSource: rankTableDS))
+            .disposed(by: disposeBag)
+        
+        listener?.sort
+            .map {
+                if $0.1 == 0 {
+                    return "\($0.0.rawValue) ⏐ All"
+                } else {
+                    return "\($0.0.rawValue) | \($0.1)기"
+                }
+            }
+            .bind(to: sortButton.rx.title())
             .disposed(by: disposeBag)
     }
 }
@@ -105,6 +117,7 @@ extension MainViewController {
     var sortButtonDidTap: Observable<Void> {
         self.sortButton.rx.tap.asObservable()
     }
+    
 }
 
 extension MainViewController {

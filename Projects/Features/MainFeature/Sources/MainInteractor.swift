@@ -39,6 +39,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     private var generation = 0
     
     private var rankingListSectionRelay = BehaviorRelay<[RankTableSection]>(value: [])
+    private var sortRelay = BehaviorRelay<(Criteria, Int)>(value: (Criteria.contributions, 0))
     
     private let fetchRankingListUseCase: FetchRankingListUseCase
     
@@ -72,6 +73,7 @@ extension MainInteractor {
 
 extension MainInteractor {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { rankingListSectionRelay }
+    var sort: BehaviorRelay<(Criteria, Int)> { sortRelay}
 }
 
 private extension MainInteractor {
@@ -113,6 +115,7 @@ private extension MainInteractor {
         presenter.sortButtonDidTap
             .bind(with: self) { owner, _ in
                 owner.router?.attachSort(closure: { criteria, generation in
+                    owner.sortRelay.accept((criteria, generation))
                     owner.rankingListSectionRelay.accept([])
                     owner.page = 1
                     owner.criteria = criteria

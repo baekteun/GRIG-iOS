@@ -11,6 +11,7 @@ import RxSwift
 import Utility
 import Domain
 import ThirdPartyLib
+import RxRelay
 
 public protocol SortRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -20,6 +21,8 @@ protocol SortPresentable: Presentable {
     var listener: SortPresentableListener? { get set }
     var dimmedViewDidTap: Observable<Void> { get }
     var completeButtonDidTap: Observable<Void> { get }
+    var criteriaDidChange: Observable<Int> { get }
+    var generationDidChange: Observable<Int> { get }
 }
 
 public protocol SortListener: AnyObject {
@@ -34,6 +37,9 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
     private let closure: ((Criteria, Int) -> Void)
     private var criteria = Criteria.contributions
     private var generation = 0
+    
+    private let criteriaListRelay = BehaviorRelay<[Criteria]>(value: [])
+    private let generationListRelay = BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]>(value: [])
     
     private let fetchGenerationListUseCase: FetchGenerationListUseCase
     
@@ -73,5 +79,34 @@ private extension SortInteractor {
                 owner.listener?.detachSortRIB()
             }
             .disposeOnDeactivate(interactor: self)
+        
+        presenter.criteriaDidChange
+            .compactMap { [weak self] in self?.criteriaListRelay.value[$0] }
+            .bind(with: self) { owner, criteria in
+                owner.criteria = criteria
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.generationDidChange
+            .compactMap { [weak self] in self?.generationListRelay.value[$0]?._id }
+            .bind(with: self) { owner, generation in
+                owner.generation = generation
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        fetchGenerationListUseCase.execute()
+            .asObservable()
+            .map { [GRIGAPI.GrigGenerationQuery.Data.Generation(_id: 0)] + $0 }
+            .bind(to: generationListRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        Observable.just(Criteria.allCases)
+            .bind(to: criteriaListRelay)
+            .disposeOnDeactivate(interactor: self)
     }
+}
+
+extension SortInteractor {
+    var criteriaList: BehaviorRelay<[Criteria]> { criteriaListRelay }
+    var generationList: BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> { generationListRelay }
 }

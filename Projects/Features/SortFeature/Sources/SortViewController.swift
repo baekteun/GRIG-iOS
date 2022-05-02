@@ -15,11 +15,13 @@ import SnapKit
 import RxGesture
 import Core
 import ViewAnimator
+import RxRelay
+import Utility
+import Domain
 
 protocol SortPresentableListener: AnyObject {
-    // TODO: Declare properties and methods that the view controller can invoke to perform
-    // business logic, such as signIn(). This protocol is implemented by the corresponding
-    // interactor class.
+    var criteriaList: BehaviorRelay<[Criteria]> { get }
+    var generationList: BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> { get }
 }
 
 final class SortViewController: BaseViewController, SortPresentable, SortViewControllable {
@@ -73,22 +75,42 @@ final class SortViewController: BaseViewController, SortPresentable, SortViewCon
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(16)
         }
+        completeButton.snp.makeConstraints {
+            $0.trailing.top.equalToSuperview().inset(17)
+        }
         criteriaPicker.snp.makeConstraints {
-            $0.leading.bottom.equalToSuperview()
+            $0.leading.equalToSuperview()
             $0.top.equalTo(titleLabel.snp.bottom)
             $0.width.equalTo(211)
         }
         generationPicker.snp.makeConstraints {
-            $0.trailing.bottom.equalToSuperview()
+            $0.trailing.equalToSuperview()
             $0.top.equalTo(titleLabel.snp.bottom)
             $0.width.equalTo(101)
-        }
-        completeButton.snp.makeConstraints {
-            $0.trailing.top.equalToSuperview().inset(17)
         }
     }
     override func configureVC() {
         view.backgroundColor = .clear
+    }
+    
+    override func bindListener() {
+        listener?.criteriaList
+            .bind(to: criteriaPicker.rx.itemTitles) { _, item in
+                return item.rawValue
+            }
+            .disposed(by: disposeBag)
+        
+        listener?.generationList
+            .map { $0.compactMap { $0 } }
+            .bind(to: generationPicker.rx.itemTitles) { _, item in
+                
+                if item._id == 0 {
+                    return "All"
+                } else {
+                    return "\(item._id ?? 1)기"
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -98,5 +120,11 @@ extension SortViewController {
     }
     var completeButtonDidTap: Observable<Void> {
         self.completeButton.rx.tap.asObservable()
+    }
+    var criteriaDidChange: Observable<Int> {
+        self.criteriaPicker.rx.itemSelected.asObservable().map(\.row)
+    }
+    var generationDidChange: Observable<Int> {
+        self.generationPicker.rx.itemSelected.asObservable().map(\.row)
     }
 }

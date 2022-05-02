@@ -112,7 +112,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         view.backgroundColor = CoreAsset.Colors.grigBackground.color
     }
     
-    override func bindPresenter() {
+    override func bindListener() {
         
     }
 }
