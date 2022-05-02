@@ -19,6 +19,7 @@ let project = Project.framework(
         .SPM.PanModal,
         .SPM.RxGesture,
         .SPM.ViewAnimator,
-        .SPM.CDMarkdownKit
+        .SPM.CDMarkdownKit,
+        .SPM.NVActivityIndicatorView
     ]
 )

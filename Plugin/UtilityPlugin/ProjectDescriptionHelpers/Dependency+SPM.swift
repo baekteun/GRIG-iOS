@@ -23,4 +23,5 @@ public extension TargetDependency.SPM {
     static let RxGesture = TargetDependency.external(name: "RxGesture")
     static let ViewAnimator = TargetDependency.external(name: "ViewAnimator")
     static let CDMarkdownKit = TargetDependency.external(name: "CDMarkdownKit")
+    static let NVActivityIndicatorView = TargetDependency.external(name: "NVActivityIndicatorView")
 }
