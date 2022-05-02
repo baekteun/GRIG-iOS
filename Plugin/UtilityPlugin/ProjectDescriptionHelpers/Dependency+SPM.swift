@@ -21,4 +21,5 @@ public extension TargetDependency.SPM {
     static let Apollo = TargetDependency.external(name: "Apollo")
     static let PanModal = TargetDependency.external(name: "PanModal")
     static let RxGesture = TargetDependency.external(name: "RxGesture")
+    static let ViewAnimator = TargetDependency.external(name: "ViewAnimator")
 }

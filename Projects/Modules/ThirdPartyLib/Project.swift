@@ -18,5 +18,6 @@ let project = Project.framework(
         .SPM.Apollo,
         .SPM.PanModal,
         .SPM.RxGesture,
+        .SPM.ViewAnimator
     ]
 )

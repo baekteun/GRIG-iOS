@@ -15,7 +15,8 @@ let dependencies = Dependencies(
         .remote(url: "https://github.com/Quick/Nimble.git", requirement: .upToNextMajor(from: "9.0.0")),
         .remote(url: "https://github.com/apollographql/apollo-ios.git", requirement: .upToNextMajor(from: "0.50.0")),
         .remote(url: "https://github.com/slackhq/PanModal.git", requirement: .upToNextMajor(from: "1.2.7")),
-        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture.git", requirement: .upToNextMajor(from: "4.0.0"))
+        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture.git", requirement: .upToNextMajor(from: "4.0.0")),
+        .remote(url: "https://github.com/marcosgriselli/ViewAnimator.git", requirement: .upToNextMajor(from: "3.0.0"))
     ],
     platforms: [.iOS]
 )
