@@ -9,6 +9,8 @@
 import RIBs
 import RxSwift
 import Utility
+import Domain
+import ThirdPartyLib
 
 public protocol SortRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -33,11 +35,15 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
     private var criteria = Criteria.contributions
     private var generation = 0
     
+    private let fetchGenerationListUseCase: FetchGenerationListUseCase
+    
     init(
         presenter: SortPresentable,
-        closure: @escaping ((Criteria, Int) -> Void)
+        closure: @escaping ((Criteria, Int) -> Void),
+        fetchGenerationListUseCase: FetchGenerationListUseCase = DIContainer.resolve(FetchGenerationListUseCase.self)!
     ) {
         self.closure = closure
+        self.fetchGenerationListUseCase = fetchGenerationListUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }
