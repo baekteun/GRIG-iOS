@@ -20,7 +20,7 @@ public extension ViewControllable {
         self.uiviewController.presentPanModal(viewController.uiviewController as! (PanModalPresentable & UIViewController))
     }
     func dismiss(animated : Bool, completion: (() -> Void)?) {
-        if self.uiviewController.isPanModalPresented {
+        if self.uiviewController.isPanModalPresented || uiviewController.presentedViewController == topViewControllable.uiviewController {
             self.uiviewController.dismiss(animated: animated, completion: completion)            
         }
     }
