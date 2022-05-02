@@ -7,7 +7,7 @@ open class BaseViewController: UIViewController {
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        bindPresenter()
+        bindListener()
     }
     
     public init() {
@@ -36,5 +36,5 @@ open class BaseViewController: UIViewController {
     open func setLayout() {}
     open func configureVC() {}
     
-    open func bindPresenter() {}
+    open func bindListener() {}
 }
