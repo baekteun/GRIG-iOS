@@ -12,8 +12,9 @@ import Domain
 import PanModal
 import UIKit
 import Utility
+import SortFeature
 
-protocol MainInteractable: Interactable, UserListener {
+protocol MainInteractable: Interactable, UserListener, SortListener{
     var router: MainRouting? { get set }
     var listener: MainListener? { get set }
 }
@@ -25,14 +26,19 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
     
     private let userBuilder: UserBuildable
     private var userRouter: UserRouting?
+    
+    private let sortBuilder: SortBuildable
+    private var sortRouter: SortRouting?
 
     // TODO: Constructor inject child builder protocols to allow building children.
     init(
         interactor: MainInteractable,
         viewController: MainViewControllable,
-        userBuilder: UserBuildable
+        userBuilder: UserBuildable,
+        sortBuilder: SortBuildable
     ) {
         self.userBuilder = userBuilder
+        self.sortBuilder = sortBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -52,10 +58,16 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          userRouter = nil
      }
      func attachSort(closure: ((Criteria, Int) -> Void)) {
-         
+         let router = sortBuilder.build(withListener: interactor, closure: closure)
+         sortRouter = router
+         attachChild(router)
+         viewController.CustomPresent(router.viewControllable)
      }
      func detachSort() {
-         
+         guard let router = sortRouter else { return }
+         viewController.dismiss(animated: true, completion: nil)
+         detachChild(router)
+         sortRouter = nil
      }
      func presentActionSheet() {
          viewControllable.presentAlert(title: "GRIG", message: "Github Rank In GSM", style: .actionSheet, actions: [
