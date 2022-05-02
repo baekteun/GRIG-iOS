@@ -14,7 +14,7 @@ import UIKit
 import Utility
 import SortFeature
 
-protocol MainInteractable: Interactable, UserListener, SortListener{
+protocol MainInteractable: Interactable, UserListener, SortListener {
     var router: MainRouting? { get set }
     var listener: MainListener? { get set }
 }

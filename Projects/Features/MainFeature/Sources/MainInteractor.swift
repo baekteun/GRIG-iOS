@@ -21,6 +21,7 @@ protocol MainPresentable: Presentable {
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> { get }
     var nextPageTrigger: Observable<Void> { get }
     var helpButtonDidTap: Observable<Void> { get }
+    var sortButtonDidTap: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {
@@ -33,6 +34,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     weak var listener: MainListener?
     
     private var criteria = Criteria.contributions
+    private let count = 30
     private var page = 1
     private var generation = 0
     
@@ -63,6 +65,9 @@ extension MainInteractor {
     func detachUserRIB() {
         router?.detachUser()
     }
+    func detachSortRIB() {
+        router?.detachSort()
+    }
 }
 
 extension MainInteractor {
@@ -73,7 +78,7 @@ private extension MainInteractor {
     func bindPresenter() {
         fetchRankingListUseCase.execute(
             criteria: criteria,
-            count: 30,
+            count: count,
             page: page,
             generation: generation
         ).map { [weak self] entity in
@@ -98,7 +103,7 @@ private extension MainInteractor {
             }).flatMap({ owner, _ in
                 owner.fetchRankingListUseCase.execute(
                     criteria: owner.criteria,
-                    count: 30,
+                    count: owner.count,
                     page: owner.page,
                     generation: owner.generation
                 )
@@ -114,6 +119,15 @@ private extension MainInteractor {
         presenter.helpButtonDidTap
             .bind(with: self) { owner, _ in
                 owner.router?.presentActionSheet()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.sortButtonDidTap
+            .bind(with: self) { owner, _ in
+                owner.router?.attachSort(closure: { criteria, generation in
+                    owner.criteria = criteria
+                    owner.generation = generation
+                })
             }
             .disposeOnDeactivate(interactor: self)
     }

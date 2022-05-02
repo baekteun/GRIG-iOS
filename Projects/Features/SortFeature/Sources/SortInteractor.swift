@@ -15,11 +15,11 @@ public protocol SortRouting: ViewableRouting {
 
 protocol SortPresentable: Presentable {
     var listener: SortPresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
+    var dimmedViewDidTap: Observable<Void> { get }
 }
 
 public protocol SortListener: AnyObject {
-    // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
+    func detachSortRIB()
 }
 
 final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteractable, SortPresentableListener {
@@ -36,11 +36,21 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
+        bindPresenter()
     }
 
     override func willResignActive() {
         super.willResignActive()
         // TODO: Pause any business logic.
+    }
+}
+
+private extension SortInteractor {
+    func bindPresenter() {
+        presenter.dimmedViewDidTap
+            .bind(with: self) { owner, _ in
+                owner.listener?.detachSortRIB()
+            }
+            .disposeOnDeactivate(interactor: self)
     }
 }

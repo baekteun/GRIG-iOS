@@ -102,11 +102,14 @@ extension MainViewController {
     var helpButtonDidTap: Observable<Void> {
         self.helpButton.rx.tap.asObservable()
     }
+    var sortButtonDidTap: Observable<Void> {
+        self.sortButton.rx.tap.asObservable()
+    }
 }
 
 extension MainViewController {
     func CustomPresent(_ viewController: ViewControllable) {
-        viewController.uiviewController.modalPresentationStyle = .fullScreen
+        viewController.uiviewController.modalPresentationStyle = .overFullScreen
         viewController.uiviewController.modalTransitionStyle = .crossDissolve
         self.topViewControllable.present(viewController, animated: true, completion: nil)
     }
