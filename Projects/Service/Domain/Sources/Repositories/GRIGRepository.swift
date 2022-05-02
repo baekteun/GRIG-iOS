@@ -8,4 +8,6 @@ public protocol GRIGRepository {
         page: Int,
         generation: Int
     ) -> Single<[GRIGAPI.GrigEntityQuery.Data.Ranking?]>
+    
+    func fetchGenerationList() -> Single<[GRIGAPI.GrigGenerationQuery.Data.Generation?]>
 }

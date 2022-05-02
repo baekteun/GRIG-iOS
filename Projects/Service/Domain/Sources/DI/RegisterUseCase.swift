@@ -8,5 +8,10 @@ public extension DIContainer {
                 grigRepository: r.resolve(GRIGRepository.self)!
             )
         }
+        DIContainer.register(FetchGenerationListUseCase.self) { r in
+            FetchGenerationListUseCase(
+                grigRepository: r.resolve(GRIGRepository.self)!
+            )
+        }
     }
 }

@@ -13,6 +13,10 @@ struct GRIGRepositoryImpl: GRIGRepository {
         page: Int,
         generation: Int
     ) -> Single<[GRIGAPI.GrigEntityQuery.Data.Ranking?]> {
-        grigRemote.request(criteria: criteria, count: count, page: page, generation: generation)
+        grigRemote.fetchRankingList(criteria: criteria, count: count, page: page, generation: generation)
+    }
+    
+    func fetchGenerationList() -> Single<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> {
+        grigRemote.fetchGenerationList()
     }
 }

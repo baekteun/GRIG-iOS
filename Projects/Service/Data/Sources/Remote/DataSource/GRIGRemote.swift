@@ -10,7 +10,7 @@ struct GRIGRemote {
     
     static let shared = GRIGRemote()
     
-    func request(
+    func fetchRankingList(
         criteria: Criteria,
         count: Int,
         page: Int,
@@ -23,7 +23,20 @@ struct GRIGRemote {
                 switch res {
                 case let .success(data):
                     single(.success(data.data?.ranking ?? []))
-                    break
+                case let .failure(err):
+                    single(.failure(err))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func fetchGenerationList() -> Single<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> {
+        .create { single in
+            client.fetch(query: GRIGAPI.GrigGenerationQuery()) { res in
+                switch res {
+                case let .success(data):
+                    single(.success(data.data?.generation ?? []))
                 case let .failure(err):
                     single(.failure(err))
                 }
