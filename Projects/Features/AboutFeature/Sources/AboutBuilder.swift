@@ -8,7 +8,7 @@
 
 import RIBs
 
-protocol AboutDependency: Dependency {
+public protocol AboutDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -20,17 +20,17 @@ final class AboutComponent: Component<AboutDependency> {
 
 // MARK: - Builder
 
-protocol AboutBuildable: Buildable {
+public protocol AboutBuildable: Buildable {
     func build(withListener listener: AboutListener) -> AboutRouting
 }
 
-final class AboutBuilder: Builder<AboutDependency>, AboutBuildable {
+public final class AboutBuilder: Builder<AboutDependency>, AboutBuildable {
 
-    override init(dependency: AboutDependency) {
+    public override init(dependency: AboutDependency) {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: AboutListener) -> AboutRouting {
+    public func build(withListener listener: AboutListener) -> AboutRouting {
         let component = AboutComponent(dependency: dependency)
         let viewController = AboutViewController()
         let interactor = AboutInteractor(presenter: viewController)

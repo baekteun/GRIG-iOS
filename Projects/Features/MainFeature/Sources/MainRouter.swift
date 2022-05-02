@@ -13,8 +13,9 @@ import PanModal
 import UIKit
 import Utility
 import SortFeature
+import AboutFeature
 
-protocol MainInteractable: Interactable, UserListener, SortListener {
+protocol MainInteractable: Interactable, UserListener, SortListener, AboutListener {
     var router: MainRouting? { get set }
     var listener: MainListener? { get set }
 }
@@ -29,16 +30,21 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
     
     private let sortBuilder: SortBuildable
     private var sortRouter: SortRouting?
+    
+    private let aboutBuilder: AboutBuildable
+    private var aboutRouter: AboutRouting?
 
     // TODO: Constructor inject child builder protocols to allow building children.
     init(
         interactor: MainInteractable,
         viewController: MainViewControllable,
         userBuilder: UserBuildable,
-        sortBuilder: SortBuildable
+        sortBuilder: SortBuildable,
+        aboutBuilder: AboutBuildable
     ) {
         self.userBuilder = userBuilder
         self.sortBuilder = sortBuilder
+        self.aboutBuilder = aboutBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -69,6 +75,18 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          detachChild(router)
          sortRouter = nil
      }
+     func attachAbout() {
+         let router = aboutBuilder.build(withListener: interactor)
+         aboutRouter = router
+         attachChild(router)
+         viewController.pushViewController(router.viewControllable, animated: true)
+     }
+     func detachAbout() {
+         guard let router = aboutRouter else { return }
+         viewController.popViewController(animated: true)
+         detachChild(router)
+         aboutRouter = nil
+     }
      func presentActionSheet() {
          viewControllable.presentAlert(title: "GRIG", message: "Github Rank In GSM", style: .actionSheet, actions: [
             .init(title: "Join", style: .default, handler: { [weak self] _ in
@@ -78,7 +96,7 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
                 self?.viewControllable.openSafariWithUrl(url: "https://github.com/GRI-G/GRIG-API")
             }),
             .init(title: "About", style: .default, handler: { [weak self] _ in
-                
+                self?.attachAbout()
             }),
             .init(title: "Cancel", style: .cancel, handler: nil)
          ])

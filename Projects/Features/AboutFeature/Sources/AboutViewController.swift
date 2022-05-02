@@ -9,6 +9,8 @@
 import RIBs
 import RxSwift
 import UIKit
+import CDMarkdownKit
+import Then
 
 protocol AboutPresentableListener: AnyObject {
     // TODO: Declare properties and methods that the view controller can invoke to perform
@@ -17,6 +19,7 @@ protocol AboutPresentableListener: AnyObject {
 }
 
 final class AboutViewController: UIViewController, AboutPresentable, AboutViewControllable {
+    // MARK: - Properties
 
     weak var listener: AboutPresentableListener?
 }

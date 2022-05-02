@@ -13,6 +13,8 @@ public protocol MainRouting: ViewableRouting {
     func detachUser()
     func attachSort(closure: @escaping ((Criteria, Int) -> Void))
     func detachSort()
+    func attachAbout()
+    func detachAbout()
     func presentActionSheet()
 }
 
