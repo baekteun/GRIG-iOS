@@ -80,12 +80,12 @@ final class SortViewController: BaseViewController, SortPresentable, SortViewCon
         }
         criteriaPicker.snp.makeConstraints {
             $0.leading.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(30)
             $0.width.equalTo(211)
         }
         generationPicker.snp.makeConstraints {
             $0.trailing.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(30)
             $0.width.equalTo(101)
         }
     }
