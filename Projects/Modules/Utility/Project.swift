@@ -4,6 +4,7 @@ import ProjectDescriptionHelpers
 let project = Project.framework(
     name: "Utility",
     dependencies: [
-        .Project.Module.ThirdPartyLib
+        .Project.Module.ThirdPartyLib,
+        .Project.Module.Core
     ]
 )

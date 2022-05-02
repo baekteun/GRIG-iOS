@@ -5,7 +5,6 @@ import Domain
 import Utility
 import Swinject
 import CommonFeature
-import InjectManager
 import ThirdPartyLib
 
 public protocol MainRouting: ViewableRouting {

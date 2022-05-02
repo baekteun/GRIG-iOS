@@ -101,8 +101,7 @@ public extension Project {
             sources: sources,
             resources: resources,
             scripts: scripts,
-            dependencies: dependencies,
-            settings: .settings(base: .codeSign)
+            dependencies: dependencies
         )
         let demoSource: SourceFilesList = ["Demo/Sources/**"]
         let demoSources: SourceFilesList = SourceFilesList(globs: sources.globs + demoSource.globs)
