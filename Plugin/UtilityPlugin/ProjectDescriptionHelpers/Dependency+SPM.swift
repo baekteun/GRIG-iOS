@@ -20,4 +20,5 @@ public extension TargetDependency.SPM {
     static let Nimble = TargetDependency.external(name: "Nimble")
     static let Apollo = TargetDependency.external(name: "Apollo")
     static let PanModal = TargetDependency.external(name: "PanModal")
+    static let RxGesture = TargetDependency.external(name: "RxGesture")
 }
