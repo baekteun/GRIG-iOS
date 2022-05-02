@@ -3,7 +3,7 @@ import ProjectDescription
 import UtilityPlugin
 
 let settinges: Settings =
-    .settings(base: Environment.baseSetting,
+    .settings(base: Environment.baseSetting.merging(.codeSign),
               configurations: [
                 .debug(name: .dev, xcconfig: .relativeToRoot("XCConfig/App/App-DEV.xcconfig")),
                 .debug(name: .debug),
@@ -31,7 +31,8 @@ let targets: [Target] = [
         dependencies: [
             .Project.Features.RootFeature,
             .Project.Service.Data
-        ]
+        ],
+        settings: .settings(base: .codeSign)
     ),
     .init(
         name: Environment.targetTestName,
