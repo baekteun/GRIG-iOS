@@ -96,4 +96,7 @@ extension SortViewController {
     var dimmedViewDidTap: Observable<Void> {
         self.dimmedView.rx.tapGesture().when(.recognized).map { _ in () }.asObservable()
     }
+    var completeButtonDidTap: Observable<Void> {
+        self.completeButton.rx.tap.asObservable()
+    }
 }

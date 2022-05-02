@@ -11,7 +11,7 @@ import ThirdPartyLib
 public protocol MainRouting: ViewableRouting {
     func attachUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking)
     func detachUser()
-    func attachSort(closure: ((Criteria, Int) -> Void))
+    func attachSort(closure: @escaping ((Criteria, Int) -> Void))
     func detachSort()
     func presentActionSheet()
 }

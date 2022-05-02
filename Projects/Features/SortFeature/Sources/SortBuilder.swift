@@ -22,7 +22,7 @@ final class SortComponent: Component<SortDependency> {
 // MARK: - Builder
 
 public protocol SortBuildable: Buildable {
-    func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting
+    func build(withListener listener: SortListener, closure: @escaping ((Criteria, Int) -> Void)) -> SortRouting
 }
 
 public final class SortBuilder: Builder<SortDependency>, SortBuildable {
@@ -31,10 +31,10 @@ public final class SortBuilder: Builder<SortDependency>, SortBuildable {
         super.init(dependency: dependency)
     }
 
-    public func build(withListener listener: SortListener, closure: ((Criteria, Int) -> Void)) -> SortRouting {
+    public func build(withListener listener: SortListener, closure: @escaping ((Criteria, Int) -> Void)) -> SortRouting {
         let component = SortComponent(dependency: dependency)
         let viewController = SortViewController()
-        let interactor = SortInteractor(presenter: viewController)
+        let interactor = SortInteractor(presenter: viewController, closure: closure)
         interactor.listener = listener
         return SortRouter(interactor: interactor, viewController: viewController)
     }

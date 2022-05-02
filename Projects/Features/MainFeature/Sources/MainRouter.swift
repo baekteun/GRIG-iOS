@@ -57,7 +57,7 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          detachChild(router)
          userRouter = nil
      }
-     func attachSort(closure: ((Criteria, Int) -> Void)) {
+     func attachSort(closure: @escaping ((Criteria, Int) -> Void)) {
          let router = sortBuilder.build(withListener: interactor, closure: closure)
          sortRouter = router
          attachChild(router)

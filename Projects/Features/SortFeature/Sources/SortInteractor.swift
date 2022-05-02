@@ -8,6 +8,7 @@
 
 import RIBs
 import RxSwift
+import Utility
 
 public protocol SortRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -16,6 +17,7 @@ public protocol SortRouting: ViewableRouting {
 protocol SortPresentable: Presentable {
     var listener: SortPresentableListener? { get set }
     var dimmedViewDidTap: Observable<Void> { get }
+    var completeButtonDidTap: Observable<Void> { get }
 }
 
 public protocol SortListener: AnyObject {
@@ -27,9 +29,15 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
     weak var router: SortRouting?
     weak var listener: SortListener?
 
-    // TODO: Add additional dependencies to constructor. Do not perform any logic
-    // in constructor.
-    override init(presenter: SortPresentable) {
+    private let closure: ((Criteria, Int) -> Void)
+    private var criteria = Criteria.contributions
+    private var generation = 0
+    
+    init(
+        presenter: SortPresentable,
+        closure: @escaping ((Criteria, Int) -> Void)
+    ) {
+        self.closure = closure
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -49,6 +57,13 @@ private extension SortInteractor {
     func bindPresenter() {
         presenter.dimmedViewDidTap
             .bind(with: self) { owner, _ in
+                owner.listener?.detachSortRIB()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.completeButtonDidTap
+            .bind(with: self) { owner, _ in
+                owner.closure(owner.criteria, owner.generation)
                 owner.listener?.detachSortRIB()
             }
             .disposeOnDeactivate(interactor: self)
