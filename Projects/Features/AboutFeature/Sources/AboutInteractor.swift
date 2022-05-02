@@ -15,11 +15,11 @@ public protocol AboutRouting: ViewableRouting {
 
 protocol AboutPresentable: Presentable {
     var listener: AboutPresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
+    var viewWillDisAppearTrigger: Observable<Void> { get }
 }
 
 public protocol AboutListener: AnyObject {
-    // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
+    func detachAboutRIB()
 }
 
 final class AboutInteractor: PresentableInteractor<AboutPresentable>, AboutInteractable, AboutPresentableListener {
@@ -36,11 +36,21 @@ final class AboutInteractor: PresentableInteractor<AboutPresentable>, AboutInter
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
+        bindPresenter()
     }
 
     override func willResignActive() {
         super.willResignActive()
         // TODO: Pause any business logic.
+    }
+}
+
+private extension AboutInteractor {
+    func bindPresenter() {
+        presenter.viewWillDisAppearTrigger
+            .bind(with: self) { owner, _ in
+                owner.listener?.detachAboutRIB()
+            }
+            .disposeOnDeactivate(interactor: self)
     }
 }

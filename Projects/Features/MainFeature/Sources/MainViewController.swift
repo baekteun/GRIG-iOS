@@ -72,6 +72,11 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     override func configureVC() {
         view.backgroundColor = CoreAsset.Colors.grigBackground.color
     }
+    override func configureNavigation() {
+        let backButton = UIBarButtonItem(title: "back", style: .plain, target: nil, action: nil)
+        backButton.tintColor = CoreAsset.Colors.girgGray.color
+        self.navigationItem.backBarButtonItem = backButton
+    }
     
     // MARK: - Binding
     override func bindListener() {

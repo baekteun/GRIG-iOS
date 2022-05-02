@@ -71,6 +71,9 @@ extension MainInteractor {
     func detachSortRIB() {
         router?.detachSort()
     }
+    func detachAboutRIB() {
+        router?.detachAbout()
+    }
 }
 
 extension MainInteractor {

@@ -16,6 +16,7 @@ open class BaseViewController: UIViewController {
         addView()
         setLayout()
         configureVC()
+        configureNavigation()
     }
     
     deinit{
@@ -35,6 +36,7 @@ open class BaseViewController: UIViewController {
     open func addView() {}
     open func setLayout() {}
     open func configureVC() {}
+    open func configureNavigation() {}
     
     open func bindListener() {}
 }
