@@ -30,6 +30,7 @@ open class BaseViewController: UIViewController {
         addView()
         setLayout()
         configureVC()
+        configureNavigation()
     }
     
     open func setUp() {}
