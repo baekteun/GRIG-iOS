@@ -5,6 +5,7 @@ let project = Project.framework(
     name: "Core",
     resources: ["Resources/**"],
     dependencies: [
-        .Project.Module.ThirdPartyLib
+        .Project.Module.ThirdPartyLib,
+        .Project.Module.Utility
     ]
 )

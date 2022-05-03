@@ -6,7 +6,6 @@ let project = Project.staticFramework(
     dependencies: [
         .Project.Service.Domain,
         .Project.Module.ThirdPartyLib,
-        .Project.Module.Utility,
         .Project.Module.Core
     ]
 )
