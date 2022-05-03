@@ -2,7 +2,6 @@ import Foundation
 import CDMarkdownKit
 import Then
 import UIKit
-import Core
 
 public enum About: String, CaseIterable {
     case purpose = "목적"
@@ -14,7 +13,7 @@ public enum About: String, CaseIterable {
     private static let parser: CDMarkdownParser = {
         let parser = CDMarkdownParser(
             font: .systemFont(ofSize: 18, weight: .regular),
-            fontColor: CDColor(cgColor: CoreAsset.Colors.grigPrimaryTextColor.color.cgColor)
+            fontColor: CDColor(cgColor: UIColor(named: "GRIG_PrimaryTextColor")?.cgColor ?? UIColor().cgColor)
         )
         
         return parser
