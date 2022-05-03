@@ -20,6 +20,7 @@ let project = Project.framework(
         .SPM.RxGesture,
         .SPM.ViewAnimator,
         .SPM.CDMarkdownKit,
-        .SPM.NVActivityIndicatorView
+        .SPM.NVActivityIndicatorView,
+        .SPM.Loaf
     ]
 )
