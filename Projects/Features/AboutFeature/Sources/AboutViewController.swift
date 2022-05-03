@@ -57,7 +57,7 @@ final class AboutViewController: BaseViewController, AboutPresentable, AboutView
         }
         labelStack.snp.makeConstraints {
             $0.top.centerX.equalToSuperview()
-            $0.width.equalTo(bounds.width-40)
+            $0.width.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalToSuperview()
         }
     }
