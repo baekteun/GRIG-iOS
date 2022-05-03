@@ -1,6 +1,7 @@
 import RIBs
 import UIKit
 import PanModal
+import Loaf
 
 public extension ViewControllable {
     func present(
@@ -85,6 +86,15 @@ public extension ViewControllable {
     func setViewControllersInTabbar(_ viewControllers: [ViewControllable], animated: Bool) {
         guard let tab = self.uiviewController as? UITabBarController else { return }
         tab.setViewControllers(viewControllers.map(\.uiviewController), animated: animated)
+    }
+    func showLoaf(
+        _ message: String,
+        state: Loaf.State,
+        location: Loaf.Location
+    ) {
+        DispatchQueue.main.async {
+            Loaf(message, state: state, location: location, sender: self.topViewControllable.uiviewController).show()
+        }
     }
     var topViewControllable: ViewControllable {
         var top: ViewControllable = self
