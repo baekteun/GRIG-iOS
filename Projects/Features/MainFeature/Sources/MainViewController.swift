@@ -65,8 +65,8 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
     override func setLayout() {
         logoImageView.snp.makeConstraints {
             $0.top.centerX.equalTo(view.safeAreaLayoutGuide)
-            $0.width.equalTo(bounds.width*0.288)
-            $0.height.equalTo(bounds.width*0.288*0.3)
+            $0.width.equalTo(108)
+            $0.height.equalTo(108*0.3)
         }
         helpButton.snp.makeConstraints {
             $0.centerY.equalTo(logoImageView)

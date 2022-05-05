@@ -16,6 +16,9 @@ protocol UserPresentableListener: AnyObject {
 
 final class UserViewController: BaseViewController, UserPresentable, UserViewControllable {
     // MARK: - Properties
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
     private let userProfileImageView = UIImageView().then {
         $0.layer.cornerRadius = 35
         $0.clipsToBounds = true
@@ -41,17 +44,27 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.axis = .horizontal
         $0.spacing = 40
     }
-    private let bioView = UIView().then {
+    private let bioLabel = PaddingLabel(padding: .init(top: 12, left: 24, bottom: 12, right: 24)).then {
+        $0.numberOfLines = 0
         $0.backgroundColor = CoreAsset.Colors.grigWhite.color
         $0.layer.cornerRadius = 8
-    }
-    private let bioLabel = UILabel().then {
-        $0.numberOfLines = 0
+        $0.layer.masksToBounds = true
     }
     private let githubButton = GithubButton()
     private let user: GRIGAPI.GrigEntityQuery.Data.Ranking
     
     weak var listener: UserPresentableListener?
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+            if UIDevice.current.orientation.isLandscape {
+                self?.panModalTransition(to: .longForm)
+            } else if UIDevice.current.orientation.isPortrait {
+                self?.panModalTransition(to: .shortForm)
+            }
+        }
+    }
     
     // MARK: - Init
     init(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
@@ -63,10 +76,13 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     // MARK: - UI
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
-        view.addSubviews(userProfileImageView, nicknameLabel, nameLabel, statStackView, bioView, githubButton)
-        bioView.addSubviews(bioLabel)
+        view.addSubviews(scrollView)
+        scrollView.addSubviews(userProfileImageView, nicknameLabel, nameLabel, statStackView, bioLabel, githubButton)
     }
     override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalToSuperview()
+        }
         userProfileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(45)
@@ -93,19 +109,17 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.top.equalTo(nameLabel.snp.bottom).offset(20)
         }
         githubButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(34)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
             $0.height.equalTo(60)
             $0.bottom.equalToSuperview().inset(40)
         }
-        bioView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(34)
+        bioLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
             $0.top.equalTo(statStackView.snp.bottom).offset(24)
             $0.bottom.equalTo(githubButton.snp.top).offset(-12)
             $0.height.greaterThanOrEqualTo(70)
-        }
-        bioLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
     override func configureVC() {
@@ -123,10 +137,10 @@ extension UserViewController: PanModalPresentable {
         nil
     }
     var shortFormHeight: PanModalHeight {
-        .contentHeight(bounds.height > 800 ? bounds.height * 0.67 : bounds.height * 0.76)
+        .contentHeight(bounds.height * 0.76)
     }
     var longFormHeight: PanModalHeight {
-        .contentHeight(bounds.height > 800 ? bounds.height * 0.67 : bounds.height * 0.76)
+        .maxHeightWithTopInset(view.safeAreaInsets.top + 50)
     }
 }
 

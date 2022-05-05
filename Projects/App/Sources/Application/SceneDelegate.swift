@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         self.window = window
         let launchRouter = RootBuilder(dependency: AppComponent()).build()
+        startMonitoring()
         self.launchRouter = launchRouter
         launchRouter.launch(from: window)
     }
@@ -26,9 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     func sceneDidBecomeActive(_ scene: UIScene) {}
     func sceneWillResignActive(_ scene: UIScene) {}
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        startMonitoring()
-    }
+    func sceneWillEnterForeground(_ scene: UIScene) {}
     func sceneDidEnterBackground(_ scene: UIScene) {
         NetworkMonitor.shared.stopMonitoring()
     }

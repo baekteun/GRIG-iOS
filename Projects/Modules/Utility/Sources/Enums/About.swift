@@ -13,7 +13,7 @@ public enum About: String, CaseIterable {
     private static let parser: CDMarkdownParser = {
         let parser = CDMarkdownParser(
             font: .systemFont(ofSize: 18, weight: .regular),
-            fontColor: CDColor(cgColor: UIColor(named: "GRIG_PrimaryTextColor")?.cgColor ?? UIColor().cgColor)
+            fontColor: CDColor(cgColor: UIColor.gray.cgColor)
         )
         
         return parser
