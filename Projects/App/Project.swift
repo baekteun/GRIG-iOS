@@ -31,8 +31,7 @@ let targets: [Target] = [
         dependencies: [
             .Project.Features.RootFeature,
             .Project.Service.Data
-        ],
-        settings: .settings(base: .codeSign)
+        ]
     ),
     .init(
         name: Environment.targetTestName,

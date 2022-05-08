@@ -66,6 +66,10 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         }
     }
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .init()
+    }
+    
     // MARK: - Init
     init(user: GRIGAPI.GrigEntityQuery.Data.Ranking) {
         self.user = user
