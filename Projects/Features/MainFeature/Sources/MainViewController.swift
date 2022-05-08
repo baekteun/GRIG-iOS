@@ -106,6 +106,12 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             cell.model = (ip.row + 1 + ip.section * 30, item.0, item.1)
             return cell
         }
+        rankTableDS.canMoveRowAtIndexPath = { _, _ in
+            return false
+        }
+        rankTableDS.canEditRowAtIndexPath = { _, _ in
+            return false
+        }
         
         listener?.rankingListSection
             .bind(to: rankTableView.rx.items(dataSource: rankTableDS))
