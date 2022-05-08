@@ -31,6 +31,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         $0.rowHeight = 75
         $0.backgroundColor = .clear
         $0.separatorStyle = .none
+        $0.dragInteractionEnabled = false
     }
     private let logoImageView = UIImageView(image: CoreAsset.Images.grigLogo.image.withRenderingMode(.alwaysOriginal))
     private let helpButton = UIButton().then {
