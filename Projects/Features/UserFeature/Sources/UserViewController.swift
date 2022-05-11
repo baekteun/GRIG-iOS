@@ -77,6 +77,11 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         setUpUser()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        panModalTransition(to: .shortForm)
+    }
+    
     // MARK: - UI
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
@@ -116,7 +121,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
             $0.height.equalTo(60)
-            $0.bottom.equalToSuperview().inset(40)
+            $0.bottom.equalToSuperview().inset(20)
         }
         bioLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -141,7 +146,7 @@ extension UserViewController: PanModalPresentable {
         nil
     }
     var shortFormHeight: PanModalHeight {
-        .contentHeight(bounds.height * 0.76)
+        .contentHeight(scrollView.contentSize.height)
     }
     var longFormHeight: PanModalHeight {
         .maxHeightWithTopInset(view.safeAreaInsets.top + 50)
