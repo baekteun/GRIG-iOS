@@ -55,7 +55,11 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
         let router = userBuilder.build(withListener: interactor, user: user)
         userRouter = router
         attachChild(router)
-        viewControllable.presentPanModal(router.viewControllable)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            viewControllable.present(router.viewControllable, animated: true, completion: nil)
+        } else {
+            viewControllable.presentPanModal(router.viewControllable)
+        }
     }
      func detachUser() {
          guard let router = userRouter else { return }
