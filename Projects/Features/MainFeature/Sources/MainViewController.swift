@@ -144,6 +144,7 @@ extension MainViewController {
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> {
         self.rankTableView.rx.modelSelected((Criteria, GRIGAPI.GrigEntityQuery.Data.Ranking).self)
             .map(\.1)
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var nextPageTrigger: Observable<Void> {

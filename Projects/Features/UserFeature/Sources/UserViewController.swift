@@ -55,17 +55,6 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     
     weak var listener: UserPresentableListener?
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: nil) { [weak self] _ in
-            if UIDevice.current.orientation.isLandscape {
-                self?.panModalTransition(to: .longForm)
-            } else if UIDevice.current.orientation.isPortrait {
-                self?.panModalTransition(to: .shortForm)
-            }
-        }
-    }
-    
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .init()
     }
@@ -143,7 +132,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
 // MARK: - PanModal
 extension UserViewController: PanModalPresentable {
     var panScrollable: UIScrollView? {
-        nil
+        scrollView
     }
     var shortFormHeight: PanModalHeight {
         .contentHeight(scrollView.contentSize.height)
