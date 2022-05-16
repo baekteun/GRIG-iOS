@@ -7,5 +7,8 @@ public extension DIContainer {
         DIContainer.register(GRIGRepository.self) { _ in
             GRIGRepositoryImpl()
         }
+        DIContainer.register(GithubRepository.self) { r in
+            GithubRepositoryImpl()
+        }
     }
 }

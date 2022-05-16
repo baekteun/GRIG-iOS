@@ -13,5 +13,10 @@ public extension DIContainer {
                 grigRepository: r.resolve(GRIGRepository.self)!
             )
         }
+        DIContainer.register(FetchUserInfoUseCase.self) { r in
+            FetchUserInfoUseCase(
+                githubRepository: r.resolve(GithubRepository.self)!
+            )
+        }
     }
 }
