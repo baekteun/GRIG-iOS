@@ -1,6 +1,7 @@
 import ProjectDescriptionHelpers
 import ProjectDescription
 import UtilityPlugin
+import Foundation
 
 let settinges: Settings =
     .settings(base: Environment.baseSetting.merging(.codeSign),
@@ -31,6 +32,9 @@ let targets: [Target] = [
         dependencies: [
             .Project.Features.RootFeature,
             .Project.Service.Data
+        ],
+        environment: [
+            "GITHUB": ProcessInfo.processInfo.environment["TUIST_GITHUB"] ?? ""
         ]
     ),
     .init(

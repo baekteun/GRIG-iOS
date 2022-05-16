@@ -6,6 +6,7 @@ let project = Project.staticFramework(
     dependencies: [
         .Project.Features.UserFeature,
         .Project.Features.SortFeature,
-        .Project.Features.AboutFeature
+        .Project.Features.AboutFeature,
+        .Project.Features.CompeteFeature
     ]
 )

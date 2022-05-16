@@ -15,6 +15,7 @@ public extension TargetDependency.Project.Features {
     static let UserFeature = TargetDependency.feature(name: "UserFeature")
     static let SortFeature = TargetDependency.feature(name: "SortFeature")
     static let AboutFeature = TargetDependency.feature(name: "AboutFeature")
+    static let CompeteFeature = TargetDependency.feature(name: "CompeteFeature")
 }
 
 public extension TargetDependency.Project.Module {

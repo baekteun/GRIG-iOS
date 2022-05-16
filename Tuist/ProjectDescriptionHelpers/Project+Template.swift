@@ -121,8 +121,10 @@ public extension Project {
             resources: ["Demo/Resources/**"],
             scripts: scripts,
             dependencies: [
-                .target(name: name)
-            ]
+                .target(name: name),
+                .external(name: "Inject")
+            ],
+            settings: .settings(base: ["OTHER_LDFLAGS": "$(inherited) -Xlinker -interposable"])
         )
         
         let testTargetDependencies: [TargetDependency] = hasDemoApp
