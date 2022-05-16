@@ -57,6 +57,7 @@ Brewfile.lock.json
 .DS_Store
 .AppleDouble
 .LSOverride
+ENV.swift
 
 # Icon must end with two \r
 Icon
