@@ -19,4 +19,5 @@ if [ -z "${SCRIPT_PATH}" ]; then
 fi
 
 cd "${PROJECT_ROOT}/Service/APIKit"
-"${SCRIPT_PATH}"/run-bundled-codegen.sh codegen:generate --target=swift --namespace=GRIGAPI --includes=./**/*.graphql --localSchemaFile="schema.json" ../Domain/Sources/Entities
+"${SCRIPT_PATH}"/run-bundled-codegen.sh codegen:generate --target=swift --namespace=GRIGAPI --includes=./Sources/API/GRIG/*.graphql --localSchemaFile="grig.json" ../Domain/Sources/Entities
+"${SCRIPT_PATH}"/run-bundled-codegen.sh codegen:generate --target=swift --namespace=GRIGAPI --includes=./Sources/API/Github/*.graphql --localSchemaFile="github.json" ../Domain/Sources/Entities

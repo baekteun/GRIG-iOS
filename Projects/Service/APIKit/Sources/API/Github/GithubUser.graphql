@@ -1,0 +1,31 @@
+query GithubUser($login: String!, $from: DateTime!, $to: DateTime!) {
+  user(login: $login) {
+    avatarUrl
+    contributionsCollection(from: $from, to: $to) {
+      contributionCalendar {
+        weeks {
+          contributionDays {
+            date
+            contributionCount
+          }
+        }
+        totalContributions
+      }
+    }
+    bio
+    followers {
+      totalCount
+    }
+    following {
+      totalCount
+    }
+    login
+    name
+    pullRequests {
+      totalCount
+    }
+    issues {
+      totalCount
+    }
+  }
+}

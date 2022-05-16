@@ -1,6 +1,0 @@
-query GRIGGeneration {
-  generation {
-    count
-    _id
-  }
-}
