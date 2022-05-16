@@ -122,7 +122,7 @@ public extension Project {
             scripts: scripts,
             dependencies: [
                 .target(name: name),
-                .external(name: "Inject")
+                .SPM.Inject
             ],
             settings: .settings(base: ["OTHER_LDFLAGS": "$(inherited) -Xlinker -interposable"])
         )

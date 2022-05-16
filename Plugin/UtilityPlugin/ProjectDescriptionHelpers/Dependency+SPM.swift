@@ -25,4 +25,6 @@ public extension TargetDependency.SPM {
     static let CDMarkdownKit = TargetDependency.external(name: "CDMarkdownKit")
     static let NVActivityIndicatorView = TargetDependency.external(name: "NVActivityIndicatorView")
     static let Loaf = TargetDependency.external(name: "Loaf")
+    static let Inject = TargetDependency.external(name: "Inject")
+    static let Charts = TargetDependency.external(name: "Charts")
 }

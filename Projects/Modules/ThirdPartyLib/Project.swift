@@ -21,6 +21,7 @@ let project = Project.framework(
         .SPM.ViewAnimator,
         .SPM.CDMarkdownKit,
         .SPM.NVActivityIndicatorView,
-        .SPM.Loaf
+        .SPM.Loaf,
+        .SPM.Charts
     ]
 )

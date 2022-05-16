@@ -20,7 +20,8 @@ let dependencies = Dependencies(
         .remote(url: "https://github.com/chrisdhaan/CDMarkdownKit.git", requirement: .upToNextMajor(from: "2.1.1")),
         .remote(url: "https://github.com/ninjaprox/NVActivityIndicatorView.git", requirement: .upToNextMajor(from: "5.0.0")),
         .remote(url: "https://github.com/schmidyy/Loaf.git", requirement: .upToNextMajor(from: "0.5.0")),
-        .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .upToNextMajor(from: "1.1.1"))
+        .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .upToNextMajor(from: "1.1.1")),
+        .remote(url: "https://github.com/danielgindi/Charts.git", requirement: .upToNextMajor(from: "4.0.0"))
     ],
     platforms: [.iOS]
 )
