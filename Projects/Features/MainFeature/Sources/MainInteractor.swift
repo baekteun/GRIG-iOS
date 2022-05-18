@@ -46,6 +46,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     private let isRefreshingRelay = BehaviorRelay<Bool>(value: false)
     
     private let fetchRankingListUseCase: FetchRankingListUseCase
+    private let fetchUserIDUseCase: FetchUserIDUseCase
     
     init(
         presenter: MainPresentable,
@@ -53,6 +54,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
         fetchUserIDUseCase: FetchUserIDUseCase = DIContainer.resolve(FetchUserIDUseCase.self)!
     ) {
         self.fetchRankingListUseCase = fetchRankingListUseCase
+        self.fetchUserIDUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }
