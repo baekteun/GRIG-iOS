@@ -10,5 +10,8 @@ public extension DIContainer {
         DIContainer.register(GithubRepository.self) { r in
             GithubRepositoryImpl()
         }
+        DIContainer.register(UserIDRepository.self) { r in
+            UserIDRepositoryImpl(userDefaults: .standard)
+        }
     }
 }

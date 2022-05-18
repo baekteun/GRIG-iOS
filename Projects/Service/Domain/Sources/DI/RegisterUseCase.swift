@@ -18,5 +18,20 @@ public extension DIContainer {
                 githubRepository: r.resolve(GithubRepository.self)!
             )
         }
+        DIContainer.register(FetchUserIDUseCase.self) { r in
+            FetchUserIDUseCase(
+                userIDRepository: r.resolve(UserIDRepository.self)!
+            )
+        }
+        DIContainer.register(SaveUserIDUseCase.self) { r in
+            SaveUserIDUseCase(
+                userIDRepository: r.resolve(UserIDRepository.self)!
+            )
+        }
+        DIContainer.register(DeleteUserIDUseCase.self) { r in
+            DeleteUserIDUseCase(
+                userIDRepository: r.resolve(UserIDRepository.self)!
+            )
+        }
     }
 }
