@@ -20,6 +20,7 @@ import RxRelay
 
 protocol CompetePresentableListener: AnyObject {
     var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { get }
+    var isLoading: BehaviorRelay<Bool> { get }
 }
 
 final class CompeteViewController: BaseViewController, CompetePresentable, CompeteViewControllable {

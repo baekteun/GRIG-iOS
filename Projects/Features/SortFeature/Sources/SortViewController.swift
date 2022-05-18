@@ -22,6 +22,7 @@ import Domain
 protocol SortPresentableListener: AnyObject {
     var criteriaList: BehaviorRelay<[Criteria]> { get }
     var generationList: BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> { get }
+    var isLoading: BehaviorRelay<Bool> { get }
 }
 
 final class SortViewController: BaseViewController, SortPresentable, SortViewControllable {
@@ -110,6 +111,12 @@ final class SortViewController: BaseViewController, SortPresentable, SortViewCon
                     return "\(item._id ?? 1)기"
                 }
             }
+            .disposed(by: disposeBag)
+        
+        listener?.isLoading
+            .bind(with: self, onNext: { owner, isLoading in
+                isLoading ? owner.startIndicator() : owner.stopIndicator()
+            })
             .disposed(by: disposeBag)
     }
 }

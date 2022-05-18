@@ -21,11 +21,6 @@ protocol MainPresentableListener: AnyObject {
 
 final class MainViewController: BaseViewController, MainPresentable, MainViewControllable {
     // MARK: - Properties
-    private let activityIndicator = NVActivityIndicatorView(
-        frame: .zero,
-        type: .pacman,
-        color: CoreAsset.Colors.grigPrimaryTextColor.color
-    )
     private let rankTableView = UITableView().then {
         $0.register(cellType: RankTableCell.self)
         $0.rowHeight = 75
@@ -44,6 +39,9 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
             for: .normal
         )
     }
+    private let competeButton = UIButton().then {
+        $0.setImage(CoreAsset.Images.grigCompeteIcon.image.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
     private let sortButton = UIButton().then {
         $0.setTitle("contributions ⏐ All ", for: .normal)
         $0.setTitleColor(CoreAsset.Colors.girgGray.color, for: .normal)
@@ -61,13 +59,18 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         rankTableView.refreshControl = self.refreshControl
     }
     override func addView() {
-        view.addSubviews(logoImageView, helpButton, sortButton, rankTableView, activityIndicator)
+        view.addSubviews(logoImageView, helpButton, competeButton, sortButton, rankTableView)
     }
     override func setLayout() {
         logoImageView.snp.makeConstraints {
             $0.top.centerX.equalTo(view.safeAreaLayoutGuide)
             $0.width.equalTo(108)
             $0.height.equalTo(108*0.3)
+        }
+        competeButton.snp.makeConstraints {
+            $0.centerY.equalTo(logoImageView)
+            $0.leading.equalToSuperview().offset(20)
+            $0.size.equalTo(30)
         }
         helpButton.snp.makeConstraints {
             $0.centerY.equalTo(logoImageView)
@@ -81,10 +84,6 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         sortButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(rankTableView.snp.top).offset(-8)
-        }
-        activityIndicator.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(50)
         }
     }
     override func configureVC() {
@@ -130,7 +129,7 @@ final class MainViewController: BaseViewController, MainPresentable, MainViewCon
         
         listener?.isLoading
             .bind(with: self, onNext: { owner, isLoading in
-                isLoading ? owner.activityIndicator.startAnimating() : owner.activityIndicator.stopAnimating()
+                isLoading ? owner.startIndicator() : owner.stopIndicator()
             })
             .disposed(by: disposeBag)
         

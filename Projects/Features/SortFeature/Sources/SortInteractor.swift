@@ -40,6 +40,7 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
     
     private let criteriaListRelay = BehaviorRelay<[Criteria]>(value: [])
     private let generationListRelay = BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]>(value: [])
+    private let refreshRelay = BehaviorRelay<Bool>(value: false)
     
     private let fetchGenerationListUseCase: FetchGenerationListUseCase
     
@@ -67,6 +68,7 @@ final class SortInteractor: PresentableInteractor<SortPresentable>, SortInteract
 
 private extension SortInteractor {
     func bindPresenter() {
+        let refreshIndicator = ActivityIndicator()
         presenter.dimmedViewDidTap
             .bind(with: self) { owner, _ in
                 owner.listener?.detachSortRIB()
@@ -95,6 +97,7 @@ private extension SortInteractor {
             .disposeOnDeactivate(interactor: self)
         
         fetchGenerationListUseCase.execute()
+            .trackActivity(refreshIndicator)
             .catchAndReturn([])
             .asObservable()
             .map { [GRIGAPI.GrigGenerationQuery.Data.Generation(_id: 0)] + $0 }
@@ -104,10 +107,16 @@ private extension SortInteractor {
         Observable.just(Criteria.allCases)
             .bind(to: criteriaListRelay)
             .disposeOnDeactivate(interactor: self)
+        
+        refreshIndicator
+            .asObservable()
+            .bind(to: refreshRelay)
+            .disposeOnDeactivate(interactor: self)
     }
 }
 
 extension SortInteractor {
     var criteriaList: BehaviorRelay<[Criteria]> { criteriaListRelay }
     var generationList: BehaviorRelay<[GRIGAPI.GrigGenerationQuery.Data.Generation?]> { generationListRelay }
+    var isLoading: BehaviorRelay<Bool> { refreshRelay }
 }

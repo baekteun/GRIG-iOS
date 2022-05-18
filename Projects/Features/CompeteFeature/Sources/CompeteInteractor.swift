@@ -12,6 +12,7 @@ import Domain
 import RxRelay
 import Foundation
 import ThirdPartyLib
+import Utility
 
 public protocol CompeteRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -34,6 +35,7 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     weak var listener: CompeteListener?
     
     private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
+    private let refreshRelay = BehaviorRelay<Bool>(value: false)
         
     private let fetchUesrInfoUseCase: FetchUserInfoUseCase
     private let saveMyUserIDUseCase: SaveMyUserIDUseCase
@@ -72,10 +74,18 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
 
 extension CompeteInteractor {
     var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { competeUserRelay }
+    var isLoading: BehaviorRelay<Bool> { refreshRelay }
 }
 
 private extension CompeteInteractor {
     func bindPresenter() {
+        let refreshIndicator = ActivityIndicator()
+        
+        refreshIndicator
+            .asObservable()
+            .bind(to: refreshRelay)
+            .disposeOnDeactivate(interactor: self)
+        
         presenter.viewWillDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachCompete()
@@ -90,10 +100,10 @@ private extension CompeteInteractor {
                 Observable.zip(
                     owner.fetchUesrInfoUseCase.execute(
                         login: owner.my, from: from, to: to
-                    ).asObservable(),
+                    ).trackActivity(refreshIndicator).asObservable(),
                     owner.fetchUesrInfoUseCase.execute(
                         login: owner.compete, from: from, to: to
-                    ).asObservable()
+                    ).trackActivity(refreshIndicator).asObservable()
                 )
             }
             .catch({ [weak self] _ in
