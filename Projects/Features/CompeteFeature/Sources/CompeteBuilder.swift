@@ -45,7 +45,6 @@ final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
         let viewController = CompeteViewController()
         let interactor = CompeteInteractor(
             presenter: viewController,
-            fetchUesrInfoUseCase: DIContainer.resolve(FetchUserInfoUseCase.self)!,
             my: myLogin,
             compete: competeLogin
         )

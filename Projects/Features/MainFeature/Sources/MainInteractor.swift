@@ -49,7 +49,8 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     
     init(
         presenter: MainPresentable,
-        fetchRankingListUseCase: FetchRankingListUseCase = DIContainer.resolve(FetchRankingListUseCase.self)!
+        fetchRankingListUseCase: FetchRankingListUseCase = DIContainer.resolve(FetchRankingListUseCase.self)!,
+        fetchUserIDUseCase: FetchUserIDUseCase = DIContainer.resolve(FetchUserIDUseCase.self)!
     ) {
         self.fetchRankingListUseCase = fetchRankingListUseCase
         super.init(presenter: presenter)

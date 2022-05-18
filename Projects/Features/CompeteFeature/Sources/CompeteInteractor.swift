@@ -11,6 +11,7 @@ import RxSwift
 import Domain
 import RxRelay
 import Foundation
+import ThirdPartyLib
 
 protocol CompeteRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -41,7 +42,7 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     
     init(
         presenter: CompetePresentable,
-        fetchUesrInfoUseCase: FetchUserInfoUseCase,
+        fetchUesrInfoUseCase: FetchUserInfoUseCase = DIContainer.resolve(FetchUserInfoUseCase.self)!,
         my: String,
         compete: String
     ) {
