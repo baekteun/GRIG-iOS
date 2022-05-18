@@ -36,7 +36,8 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
         
     private let fetchUesrInfoUseCase: FetchUserInfoUseCase
-    private let saveUserIDUseCase: SaveUserIDUseCase
+    private let saveMyUserIDUseCase: SaveMyUserIDUseCase
+    private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
 
     private let my: String
     private let compete: String
@@ -44,12 +45,14 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     init(
         presenter: CompetePresentable,
         fetchUesrInfoUseCase: FetchUserInfoUseCase = DIContainer.resolve(FetchUserInfoUseCase.self)!,
-        saveUserIDUseCase: SaveUserIDUseCase = DIContainer.resolve(SaveUserIDUseCase.self)!,
+        saveMyUserIDUseCase: SaveMyUserIDUseCase = DIContainer.resolve(SaveMyUserIDUseCase.self)!,
+        saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!,
         my: String,
         compete: String
     ) {
         self.fetchUesrInfoUseCase = fetchUesrInfoUseCase
-        self.saveUserIDUseCase = saveUserIDUseCase
+        self.saveMyUserIDUseCase = saveMyUserIDUseCase
+        self.saveCompeteUserIDUseCase = saveCompeteUserIDUseCase
         self.my = my
         self.compete = compete
         super.init(presenter: presenter)

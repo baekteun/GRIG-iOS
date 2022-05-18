@@ -1,12 +1,12 @@
 
-public struct DeleteUserIDUseCase {
+public struct FetchCompeteUserIDUseCase {
     public init(userIDRepository: UserIDRepository) {
         self.userIDRepository = userIDRepository
     }
     
     private let userIDRepository: UserIDRepository
     
-    public func execute() {
-        userIDRepository.deleteUserID()
+    public func execute() -> String? {
+        userIDRepository.fetchCompeteUserID()
     }
 }

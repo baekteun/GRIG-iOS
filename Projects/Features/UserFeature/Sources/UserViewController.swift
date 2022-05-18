@@ -19,6 +19,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
+    private let contentView = UIView()
     private let userProfileImageView = UIImageView().then {
         $0.layer.cornerRadius = 35
         $0.clipsToBounds = true
@@ -50,7 +51,8 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
         $0.layer.cornerRadius = 8
         $0.layer.masksToBounds = true
     }
-    private let githubButton = GithubButton()
+    private let githubButton = UserCustomButton(icon: CoreAsset.Images.grigGithubIcon.image, title: "Github")
+    private let competeButton = UserCustomButton(icon: CoreAsset.Images.grigCompeteIcon.image, title: "Compete")
     private let user: GRIGAPI.GrigEntityQuery.Data.Ranking
     
     weak var listener: UserPresentableListener?
@@ -75,11 +77,16 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
     override func addView() {
         statStackView.addArrangeSubviews(followStatView, firstSeparatorView, followerStatView, secondSeparatorView, commitStatView)
         view.addSubviews(scrollView)
-        scrollView.addSubviews(userProfileImageView, nicknameLabel, nameLabel, statStackView, bioLabel, githubButton)
+        scrollView.addSubviews(contentView)
+        contentView.addSubviews(userProfileImageView, nicknameLabel, nameLabel, statStackView, bioLabel, githubButton, competeButton)
     }
     override func setLayout() {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
+        }
+        contentView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.width.top.bottom.equalToSuperview()
         }
         userProfileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -107,6 +114,12 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.top.equalTo(nameLabel.snp.bottom).offset(20)
         }
         githubButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
+            $0.height.equalTo(60)
+            $0.bottom.equalTo(competeButton.snp.top).offset(16)
+        }
+        competeButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
             $0.height.equalTo(60)
@@ -153,6 +166,11 @@ extension UserViewController {
             .asObservable()
             .compactMap { [weak self] _ in self?.user.nickname }
             .map { "https://github.com/\($0)" }
+    }
+    var competeButtonDidTap: Observable<String> {
+        self.competeButton.rx.tap
+            .asObservable()
+            .compactMap { [weak self] _ in self?.user.nickname }
     }
 }
 

@@ -3,18 +3,23 @@ import SnapKit
 import Utility
 import Core
 
-final class GithubButton: UIButton {
+final class UserCustomButton: UIButton {
     // MARK: - Properties
-    private let githubIconImage = UIImageView(image: CoreAsset.Images.grigGithubIcon.image)
-    private let githubLabel = UILabel().then {
+    private let iconImage = UIImageView()
+    private let customTitleLabel = UILabel().then {
         $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
         $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
     private let rightChevronImage = UIImageView(image: .init(systemName: "chevron.right")?.tintColor(CoreAsset.Colors.grigPrimaryTextColor.color))
     
     // MARK: - Init
-    init() {
+    init(
+        icon: UIImage,
+        title: String
+    ) {
         super.init(frame: .zero)
+        iconImage.image = icon
+        customTitleLabel.text = title
         addView()
         setLayout()
         configureButton()
@@ -26,17 +31,17 @@ final class GithubButton: UIButton {
 }
 
 // MARK: - UI
-private extension GithubButton {
+private extension UserCustomButton {
     func addView() {
-        addSubviews(githubIconImage, githubLabel, rightChevronImage)
+        addSubviews(iconImage, customTitleLabel, rightChevronImage)
     }
     func setLayout() {
-        githubIconImage.snp.makeConstraints {
+        iconImage.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(24)
             $0.centerY.equalToSuperview()
         }
-        githubLabel.snp.makeConstraints {
-            $0.leading.equalTo(githubIconImage.snp.trailing).offset(15)
+        customTitleLabel.snp.makeConstraints {
+            $0.leading.equalTo(iconImage.snp.trailing).offset(15)
             $0.centerY.equalToSuperview()
         }
         rightChevronImage.snp.makeConstraints {
@@ -47,6 +52,5 @@ private extension GithubButton {
     func configureButton() {
         backgroundColor = CoreAsset.Colors.grigWhite.color
         layer.cornerRadius = 8
-        githubLabel.text = "Github"
     }
 }

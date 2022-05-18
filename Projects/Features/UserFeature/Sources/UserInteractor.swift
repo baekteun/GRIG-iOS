@@ -18,6 +18,7 @@ protocol UserPresentable: Presentable {
     
     var viewWillDisAppearTrigger: Observable<Void> { get }
     var githubButtonDidTap: Observable<String> { get }
+    var competeButtonDidTap: Observable<String> { get }
 }
 
 public protocol UserListener: AnyObject {
@@ -60,5 +61,10 @@ private extension UserInteractor {
                 owner.router?.openGithubProfile(url: url)
             }
             .disposeOnDeactivate(interactor: self)
+        
+        presenter.competeButtonDidTap
+            .bind(with: self) { owner, name in
+                
+            }
     }
 }

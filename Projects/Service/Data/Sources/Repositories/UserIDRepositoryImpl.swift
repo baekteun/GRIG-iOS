@@ -3,7 +3,8 @@ import Domain
 
 struct UserIDRepositoryImpl: UserIDRepository {
     private enum ForKey {
-        static let userID = "userid"
+        static let myUserID = "myuserid"
+        static let competeUserID = "competeuserid"
     }
     private let userDefaults: UserDefaults
     
@@ -13,13 +14,27 @@ struct UserIDRepositoryImpl: UserIDRepository {
         self.userDefaults = userDefaults
     }
     
-    func fetchUserID() -> String? {
-        userDefaults.string(forKey: ForKey.userID)
+    func fetchMyUserID() -> String? {
+        userDefaults.string(forKey: ForKey.myUserID)
     }
-    func saveUserID(value: String) {
-        userDefaults.setValue(value, forKey: ForKey.userID)
+    
+    func saveMyUserID(value: String) {
+        userDefaults.setValue(value, forKey: ForKey.myUserID)
     }
-    func deleteUserID() {
-        userDefaults.removeObject(forKey: ForKey.userID)
+    
+    func deleteMyUserID() {
+        userDefaults.removeObject(forKey: ForKey.myUserID)
+    }
+    
+    func fetchCompeteUserID() -> String? {
+        userDefaults.string(forKey: ForKey.competeUserID)
+    }
+    
+    func saveCompeteUserID(value: String) {
+        userDefaults.setValue(value, forKey: ForKey.competeUserID)
+    }
+    
+    func deleteCompeteUserID() {
+        userDefaults.removeObject(forKey: ForKey.competeUserID)
     }
 }
