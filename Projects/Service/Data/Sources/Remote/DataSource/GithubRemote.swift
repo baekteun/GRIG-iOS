@@ -19,7 +19,7 @@ struct GithubRemote {
         login: String,
         from: String,
         to: String
-    ) -> Single<GRIGAPI.GithubUserQuery.Data.User?> {
+    ) -> Single<GRIGAPI.GithubUserQuery.Data.User> {
         .create { single in
             client.fetch(
                 query: GRIGAPI.GithubUserQuery(
@@ -30,7 +30,11 @@ struct GithubRemote {
             ) { res in
                 switch res {
                 case let .success(data):
-                    single(.success(data.data?.user))
+                    if let user = data.data?.user {
+                        single(.success(user))
+                    } else {
+                        single(.failure(GraphQLError.init(.init())))
+                    }
                 case let .failure(err):
                     single(.failure(err))
                 }

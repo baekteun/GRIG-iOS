@@ -12,7 +12,7 @@ public struct FetchUserInfoUseCase {
         login: String,
         from: String,
         to: String
-    ) -> Single<GRIGAPI.GithubUserQuery.Data.User?> {
+    ) -> Single<GRIGAPI.GithubUserQuery.Data.User> {
         githubRepository.fetchUserInfo(login: login, from: from, to: to)
     }
 }

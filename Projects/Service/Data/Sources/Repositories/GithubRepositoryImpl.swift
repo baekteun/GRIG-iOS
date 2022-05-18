@@ -8,7 +8,7 @@ struct GithubRepositoryImpl: GithubRepository {
         login: String,
         from: String,
         to: String
-    ) -> Single<GRIGAPI.GithubUserQuery.Data.User?> {
+    ) -> Single<GRIGAPI.GithubUserQuery.Data.User> {
         githubRemote.fetchUserInfo(login: login, from: from, to: to)
     }
 }
