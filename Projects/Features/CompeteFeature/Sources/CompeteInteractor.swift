@@ -8,6 +8,9 @@
 
 import RIBs
 import RxSwift
+import Domain
+import RxRelay
+import Foundation
 
 protocol CompeteRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -15,32 +18,86 @@ protocol CompeteRouting: ViewableRouting {
 
 protocol CompetePresentable: Presentable {
     var listener: CompetePresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
+    
+    var viewWillDisAppearTrigger: Observable<Void> { get }
+    var viewWillAppearTrigger: Observable<Void> { get }
 }
 
 protocol CompeteListener: AnyObject {
-    // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
+    func detachCompete()
 }
 
 final class CompeteInteractor: PresentableInteractor<CompetePresentable>, CompeteInteractable, CompetePresentableListener {
 
     weak var router: CompeteRouting?
     weak var listener: CompeteListener?
+    
+    private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
+        
+    private let fetchUesrInfoUseCase: FetchUserInfoUseCase
 
-    // TODO: Add additional dependencies to constructor. Do not perform any logic
-    // in constructor.
-    override init(presenter: CompetePresentable) {
+    private let my: String
+    private let compete: String
+    
+    init(
+        presenter: CompetePresentable,
+        fetchUesrInfoUseCase: FetchUserInfoUseCase,
+        my: String,
+        compete: String
+    ) {
+        self.fetchUesrInfoUseCase = fetchUesrInfoUseCase
+        self.my = my
+        self.compete = compete
         super.init(presenter: presenter)
         presenter.listener = self
     }
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
+        bindPresenter()
     }
 
     override func willResignActive() {
         super.willResignActive()
         // TODO: Pause any business logic.
+    }
+}
+
+extension CompeteInteractor {
+    var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { competeUserRelay }
+}
+
+private extension CompeteInteractor {
+    func bindPresenter() {
+        presenter.viewWillDisAppearTrigger
+            .bind(with: self) { owner, _ in
+                owner.listener?.detachCompete()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        let to = Date().toISO8601()
+        let from = Date().addingTimeInterval(-(86400 * 5)).toISO8601()
+        presenter.viewWillAppearTrigger
+            .withUnretained(self)
+            .flatMap { owner, _ in
+                Observable.zip(
+                    owner.fetchUesrInfoUseCase.execute(
+                        login: owner.my, from: from, to: to
+                    ).asObservable(),
+                    owner.fetchUesrInfoUseCase.execute(
+                        login: owner.compete, from: from, to: to
+                    ).asObservable()
+                )
+            }
+            .catch({ [weak self] _ in
+                self?.router?.viewControllable.topViewControllable.presentFailureAlert(
+                    title: "유저 정보를 가져오는데 실패했습니다.",
+                    message: "아이디를 확인해주세요!",
+                    style: .alert
+                )
+                return .empty()
+            })
+            .bind(to: competeUserRelay)
+            .disposeOnDeactivate(interactor: self)
     }
 }

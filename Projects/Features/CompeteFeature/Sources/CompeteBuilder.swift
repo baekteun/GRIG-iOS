@@ -7,6 +7,8 @@
 //
 
 import RIBs
+import ThirdPartyLib
+import Domain
 
 protocol CompeteDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
@@ -21,7 +23,11 @@ final class CompeteComponent: Component<CompeteDependency> {
 // MARK: - Builder
 
 protocol CompeteBuildable: Buildable {
-    func build(withListener listener: CompeteListener) -> CompeteRouting
+    func build(
+        withListener listener: CompeteListener,
+        myLogin: String,
+        competeLogin: String
+    ) -> CompeteRouting
 }
 
 final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
@@ -30,10 +36,19 @@ final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: CompeteListener) -> CompeteRouting {
-        let component = CompeteComponent(dependency: dependency)
+    func build(
+        withListener listener: CompeteListener,
+        myLogin: String,
+        competeLogin: String
+    ) -> CompeteRouting {
+        _ = CompeteComponent(dependency: dependency)
         let viewController = CompeteViewController()
-        let interactor = CompeteInteractor(presenter: viewController)
+        let interactor = CompeteInteractor(
+            presenter: viewController,
+            fetchUesrInfoUseCase: DIContainer.resolve(FetchUserInfoUseCase.self)!,
+            my: myLogin,
+            compete: competeLogin
+        )
         interactor.listener = listener
         return CompeteRouter(interactor: interactor, viewController: viewController)
     }
