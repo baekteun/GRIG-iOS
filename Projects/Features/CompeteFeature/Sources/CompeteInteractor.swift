@@ -13,7 +13,7 @@ import RxRelay
 import Foundation
 import ThirdPartyLib
 
-protocol CompeteRouting: ViewableRouting {
+public protocol CompeteRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
@@ -24,7 +24,7 @@ protocol CompetePresentable: Presentable {
     var viewWillAppearTrigger: Observable<Void> { get }
 }
 
-protocol CompeteListener: AnyObject {
+public protocol CompeteListener: AnyObject {
     func detachCompete()
 }
 
@@ -44,7 +44,7 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     init(
         presenter: CompetePresentable,
         fetchUesrInfoUseCase: FetchUserInfoUseCase = DIContainer.resolve(FetchUserInfoUseCase.self)!,
-        saveUserIDUseCase: SaveUserIDUseCase = DIContainer.resolve(SaveUserIDUseCase.self)!
+        saveUserIDUseCase: SaveUserIDUseCase = DIContainer.resolve(SaveUserIDUseCase.self)!,
         my: String,
         compete: String
     ) {

@@ -14,8 +14,9 @@ import UIKit
 import Utility
 import SortFeature
 import AboutFeature
+import CompeteFeature
 
-protocol MainInteractable: Interactable, UserListener, SortListener, AboutListener {
+protocol MainInteractable: Interactable, UserListener, SortListener, AboutListener, CompeteListener {
     var router: MainRouting? { get set }
     var listener: MainListener? { get set }
 }
@@ -33,6 +34,9 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
     
     private let aboutBuilder: AboutBuildable
     private var aboutRouter: AboutRouting?
+    
+    private let competeBuilder: CompeteBuildable
+    private var competeRouter: CompeteRouting?
 
     // TODO: Constructor inject child builder protocols to allow building children.
     init(
@@ -40,11 +44,13 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
         viewController: MainViewControllable,
         userBuilder: UserBuildable,
         sortBuilder: SortBuildable,
-        aboutBuilder: AboutBuildable
+        aboutBuilder: AboutBuildable,
+        competeBuilder: CompeteBuildable
     ) {
         self.userBuilder = userBuilder
         self.sortBuilder = sortBuilder
         self.aboutBuilder = aboutBuilder
+        self.competeBuilder = competeBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }
@@ -90,6 +96,22 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          viewController.popViewController(animated: true)
          detachChild(router)
          aboutRouter = nil
+     }
+     func attachCompete(my: String, compete: String) {
+         let router = competeBuilder.build(
+            withListener: interactor,
+            myLogin: my,
+            competeLogin: compete
+         )
+         competeRouter = router
+         attachChild(router)
+         viewControllable.pushViewController(router.viewControllable, animated: true)
+     }
+     func detachCompete() {
+         guard let router = competeRouter else { return }
+         viewControllable.popViewController(animated: true)
+         detachChild(router)
+         competeRouter = nil
      }
      func presentActionSheet() {
          let presentStyle = UIDevice.current.userInterfaceIdiom == .phone ? UIAlertController.Style.actionSheet : .alert

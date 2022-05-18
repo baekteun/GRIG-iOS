@@ -10,8 +10,9 @@ import RIBs
 import UserFeature
 import SortFeature
 import AboutFeature
+import CompeteFeature
 
-public protocol MainDependency: Dependency, UserDependency, SortDependency, AboutDependency {
+public protocol MainDependency: Dependency, UserDependency, SortDependency, AboutDependency, CompeteDependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -41,12 +42,14 @@ public final class MainBuilder: Builder<MainDependency>, MainBuildable {
         let userBuilder = UserBuilder(dependency: dependency)
         let sortBuilder = SortBuilder(dependency: dependency)
         let aboutBuilder = AboutBuilder(dependency: dependency)
+        let competeBuilder = CompeteBuilder(dependency: dependency)
         return MainRouter(
             interactor: interactor,
             viewController: viewController,
             userBuilder: userBuilder,
             sortBuilder: sortBuilder,
-            aboutBuilder: aboutBuilder
+            aboutBuilder: aboutBuilder,
+            competeBuilder: competeBuilder
         )
     }
 }

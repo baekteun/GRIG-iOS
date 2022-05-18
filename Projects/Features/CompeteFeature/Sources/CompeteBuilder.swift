@@ -10,7 +10,7 @@ import RIBs
 import ThirdPartyLib
 import Domain
 
-protocol CompeteDependency: Dependency {
+public protocol CompeteDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -22,7 +22,7 @@ final class CompeteComponent: Component<CompeteDependency> {
 
 // MARK: - Builder
 
-protocol CompeteBuildable: Buildable {
+public protocol CompeteBuildable: Buildable {
     func build(
         withListener listener: CompeteListener,
         myLogin: String,
@@ -30,13 +30,13 @@ protocol CompeteBuildable: Buildable {
     ) -> CompeteRouting
 }
 
-final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
+public final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
 
-    override init(dependency: CompeteDependency) {
+    override public init(dependency: CompeteDependency) {
         super.init(dependency: dependency)
     }
 
-    func build(
+    public func build(
         withListener listener: CompeteListener,
         myLogin: String,
         competeLogin: String

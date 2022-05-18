@@ -14,6 +14,8 @@ public protocol MainRouting: ViewableRouting {
     func detachSort()
     func attachAbout()
     func detachAbout()
+    func attachCompete(my: String, compete: String)
+    func detachCompete()
     func presentActionSheet()
 }
 
@@ -54,7 +56,7 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
         fetchUserIDUseCase: FetchUserIDUseCase = DIContainer.resolve(FetchUserIDUseCase.self)!
     ) {
         self.fetchRankingListUseCase = fetchRankingListUseCase
-        self.fetchUserIDUseCase
+        self.fetchUserIDUseCase = fetchUserIDUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -78,6 +80,9 @@ extension MainInteractor {
     }
     func detachAboutRIB() {
         router?.detachAbout()
+    }
+    func detachCompete() {
+        router?.detachCompete()
     }
 }
 
