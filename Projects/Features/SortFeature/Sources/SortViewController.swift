@@ -123,10 +123,14 @@ final class SortViewController: BaseViewController, SortPresentable, SortViewCon
 
 extension SortViewController {
     var dimmedViewDidTap: Observable<Void> {
-        self.dimmedView.rx.tapGesture().when(.recognized).map { _ in () }.asObservable()
+        self.dimmedView.rx.tapGesture().when(.recognized).map { _ in () }
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
     }
     var completeButtonDidTap: Observable<Void> {
-        self.completeButton.rx.tap.asObservable()
+        self.completeButton.rx.tap
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
     }
     var criteriaDidChange: Observable<Int> {
         self.criteriaPicker.rx.itemSelected.asObservable().map(\.row)

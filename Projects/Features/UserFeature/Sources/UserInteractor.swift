@@ -8,6 +8,8 @@
 
 import RIBs
 import RxSwift
+import Domain
+import ThirdPartyLib
 
 public protocol UserRouting: ViewableRouting {
     func openGithubProfile(url: String)
@@ -29,10 +31,16 @@ final class UserInteractor: PresentableInteractor<UserPresentable>, UserInteract
 
     weak var router: UserRouting?
     weak var listener: UserListener?
+    
+    private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
 
     // TODO: Add additional dependencies to constructor. Do not perform any logic
     // in constructor.
-    override init(presenter: UserPresentable) {
+    init(
+        presenter: UserPresentable,
+        saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!
+    ) {
+        self.saveCompeteUserIDUseCase = saveCompeteUserIDUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -64,7 +72,8 @@ private extension UserInteractor {
         
         presenter.competeButtonDidTap
             .bind(with: self) { owner, name in
-                
+                owner.saveCompeteUserIDUseCase.execute(value: name)
             }
+            .disposeOnDeactivate(interactor: self)
     }
 }

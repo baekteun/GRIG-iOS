@@ -26,6 +26,7 @@ protocol MainPresentable: Presentable {
     var helpButtonDidTap: Observable<Void> { get }
     var sortButtonDidTap: Observable<Void> { get }
     var refreshTrigger: Observable<Void> { get }
+    var competeButtonDidTap: Observable<Void> { get }
 }
 
 public protocol MainListener: AnyObject {

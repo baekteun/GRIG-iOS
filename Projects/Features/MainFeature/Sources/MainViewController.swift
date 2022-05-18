@@ -148,16 +148,28 @@ extension MainViewController {
     }
     var nextPageTrigger: Observable<Void> {
         self.rankTableView.rx.reachedBottom(offset: 120)
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var helpButtonDidTap: Observable<Void> {
-        self.helpButton.rx.tap.asObservable()
+        self.helpButton.rx.tap
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
     }
     var sortButtonDidTap: Observable<Void> {
-        self.sortButton.rx.tap.asObservable()
+        self.sortButton.rx.tap
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
     }
     var refreshTrigger: Observable<Void> {
-        self.refreshControl.rx.controlEvent(.valueChanged).asObservable()
+        self.refreshControl.rx.controlEvent(.valueChanged)
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
+    }
+    var competeButtonDidTap: Observable<Void> {
+        self.competeButton.rx.tap
+            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .asObservable()
     }
 }
 
