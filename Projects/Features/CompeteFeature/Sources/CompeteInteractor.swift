@@ -15,14 +15,21 @@ import ThirdPartyLib
 import Utility
 
 public protocol CompeteRouting: ViewableRouting {
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
+    func presentAlertWithTextField(
+        title: String?,
+        message: String?,
+        initialFirstTFValue: String?,
+        initialSecondTFValue: String?,
+        completion: @escaping ((String, String) -> Void)
+    )
 }
 
 protocol CompetePresentable: Presentable {
     var listener: CompetePresentableListener? { get set }
     
     var viewWillDisAppearTrigger: Observable<Void> { get }
-    var viewWillAppearTrigger: Observable<Void> { get }
+    var viewDidAppearTrigger: Observable<Void> { get }
+    var changeIDButtonDidTap: Observable<Void> { get }
 }
 
 public protocol CompeteListener: AnyObject {
@@ -35,9 +42,11 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     weak var listener: CompeteListener?
     
     private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
+    private let totalContributionsRelay = PublishRelay<(Int, Int)>()
     private let refreshRelay = BehaviorRelay<Bool>(value: false)
         
     private let fetchUesrInfoUseCase: FetchUserInfoUseCase
+    private let fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase
     private let saveMyUserIDUseCase: SaveMyUserIDUseCase
     private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
 
@@ -47,12 +56,14 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     init(
         presenter: CompetePresentable,
         fetchUesrInfoUseCase: FetchUserInfoUseCase = DIContainer.resolve(FetchUserInfoUseCase.self)!,
+        fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase = DIContainer.resolve(FetchUserTotalContributionUseCase.self)!,
         saveMyUserIDUseCase: SaveMyUserIDUseCase = DIContainer.resolve(SaveMyUserIDUseCase.self)!,
         saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!,
         my: String,
         compete: String
     ) {
         self.fetchUesrInfoUseCase = fetchUesrInfoUseCase
+        self.fetchUserTotalContributionUseCase = fetchUserTotalContributionUseCase
         self.saveMyUserIDUseCase = saveMyUserIDUseCase
         self.saveCompeteUserIDUseCase = saveCompeteUserIDUseCase
         self.my = my
@@ -74,6 +85,7 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
 
 extension CompeteInteractor {
     var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { competeUserRelay }
+    var totalContributions: PublishRelay<(Int, Int)> { totalContributionsRelay }
     var isLoading: BehaviorRelay<Bool> { refreshRelay }
 }
 
@@ -92,9 +104,39 @@ private extension CompeteInteractor {
             }
             .disposeOnDeactivate(interactor: self)
         
+        presenter.changeIDButtonDidTap
+            .bind(with: self) { owner, _ in
+                owner.router?.presentAlertWithTextField(
+                    title: "아이디 변경",
+                    message: nil,
+                    initialFirstTFValue: owner.my,
+                    initialSecondTFValue: owner.compete,
+                    completion: { [weak self] myID, competeID in
+                        self?.saveMyUserIDUseCase.execute(value: myID)
+                        self?.saveCompeteUserIDUseCase.execute(value: competeID)
+                    })
+            }
+            .disposeOnDeactivate(interactor: self)
+        
         let to = Date().toISO8601()
-        let from = Date().addingTimeInterval(-(86400 * 5)).toISO8601()
-        presenter.viewWillAppearTrigger
+        let from = Date().addingTimeInterval(-(86400 * 4)).toISO8601()
+        
+        presenter.viewDidAppearTrigger
+            .withUnretained(self)
+            .flatMap { owner, _ in
+                Observable.zip(
+                    owner.fetchUserTotalContributionUseCase.execute(
+                        login: owner.my
+                    ).trackActivity(refreshIndicator).asObservable(),
+                    owner.fetchUserTotalContributionUseCase.execute(
+                        login: owner.compete
+                    ).trackActivity(refreshIndicator).asObservable()
+                )
+            }
+            .bind(to: totalContributionsRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.viewDidAppearTrigger
             .withUnretained(self)
             .flatMap { owner, _ in
                 Observable.zip(

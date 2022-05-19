@@ -48,5 +48,10 @@ public extension DIContainer {
                 userIDRepository: r.resolve(UserIDRepository.self)!
             )
         }
+        DIContainer.register(FetchUserTotalContributionUseCase.self) { r in
+            FetchUserTotalContributionUseCase(
+                githubRepository: r.resolve(GithubRepository.self)!
+            )
+        }
     }
 }

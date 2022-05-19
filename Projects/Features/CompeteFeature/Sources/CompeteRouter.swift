@@ -14,7 +14,13 @@ protocol CompeteInteractable: Interactable {
 }
 
 protocol CompeteViewControllable: ViewControllable {
-    // TODO: Declare methods the router invokes to manipulate the view hierarchy.
+    func presentAlertWithTextField(
+        title: String?,
+        message: String?,
+        initialFirstTFValue: String?,
+        initialSecondTFValue: String?,
+        completion: @escaping ((String, String) -> Void)
+    )
 }
 
 final class CompeteRouter: ViewableRouter<CompeteInteractable, CompeteViewControllable>, CompeteRouting {
@@ -23,5 +29,21 @@ final class CompeteRouter: ViewableRouter<CompeteInteractable, CompeteViewContro
     override init(interactor: CompeteInteractable, viewController: CompeteViewControllable) {
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+    
+    func presentAlertWithTextField(
+       title: String?,
+       message: String?,
+       initialFirstTFValue: String?,
+       initialSecondTFValue: String?,
+       completion: @escaping ((String, String) -> Void)
+    ) {
+        viewController.presentAlertWithTextField(
+           title: title,
+           message: message,
+           initialFirstTFValue: initialFirstTFValue,
+           initialSecondTFValue: initialSecondTFValue,
+           completion: completion
+        )
     }
 }

@@ -20,7 +20,6 @@ struct NetworkInterceptorProvider: InterceptorProvider {
       MaxRetryInterceptor(),
       CacheReadInterceptor(store: self.store),
       NetworkFetchInterceptor(client: self.client),
-      HeaderInterceptor(),
       ResponseCodeInterceptor(),
       JSONResponseParsingInterceptor(cacheKeyForObject: self.store.cacheKeyForObject),
       AutomaticPersistedQueryInterceptor(),

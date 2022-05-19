@@ -117,7 +117,7 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(34)
             $0.height.equalTo(60)
-            $0.bottom.equalTo(competeButton.snp.top).offset(16)
+            $0.bottom.equalTo(competeButton.snp.top).offset(-16)
         }
         competeButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()

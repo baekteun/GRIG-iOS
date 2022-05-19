@@ -22,6 +22,13 @@ protocol MainInteractable: Interactable, UserListener, SortListener, AboutListen
 }
 protocol MainViewControllable: ViewControllable {
     func CustomPresent(_ viewController: ViewControllable)
+    func presentAlertWithTextField(
+        title: String?,
+        message: String?,
+        initialFirstTFValue: String?,
+        initialSecondTFValue: String?,
+        completion: @escaping ((String, String) -> Void)
+    )
 }
 
 final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, MainRouting {
@@ -127,5 +134,20 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
             }),
             .init(title: "Cancel", style: .cancel, handler: nil)
          ])
+     }
+     func presentAlertWithTextField(
+        title: String?,
+        message: String?,
+        initialFirstTFValue: String?,
+        initialSecondTFValue: String?,
+        completion: @escaping ((String, String) -> Void)
+     ) {
+         viewController.presentAlertWithTextField(
+            title: title,
+            message: message,
+            initialFirstTFValue: initialFirstTFValue,
+            initialSecondTFValue: initialSecondTFValue,
+            completion: completion
+         )
      }
 }

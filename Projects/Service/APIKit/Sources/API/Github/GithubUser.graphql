@@ -9,7 +9,6 @@ query GithubUser($login: String!, $from: DateTime!, $to: DateTime!) {
             contributionCount
           }
         }
-        totalContributions
       }
     }
     bio

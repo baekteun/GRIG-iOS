@@ -73,6 +73,11 @@ private extension UserInteractor {
         presenter.competeButtonDidTap
             .bind(with: self) { owner, name in
                 owner.saveCompeteUserIDUseCase.execute(value: name)
+                owner.router?.viewControllable.showLoaf(
+                    "\(name)님이 경쟁자로 등록되었습니다.",
+                    state: .info,
+                    location: .top
+                )
             }
             .disposeOnDeactivate(interactor: self)
     }

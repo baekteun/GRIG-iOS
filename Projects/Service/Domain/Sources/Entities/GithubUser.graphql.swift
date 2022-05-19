@@ -26,7 +26,6 @@ public extension GRIGAPI {
                   contributionCount
                 }
               }
-              totalContributions
             }
           }
           bio
@@ -270,7 +269,6 @@ public extension GRIGAPI {
               return [
                 GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
                 GraphQLField("weeks", type: .nonNull(.list(.nonNull(.object(Week.selections))))),
-                GraphQLField("totalContributions", type: .nonNull(.scalar(Int.self))),
               ]
             }
 
@@ -280,8 +278,8 @@ public extension GRIGAPI {
               self.resultMap = unsafeResultMap
             }
 
-            public init(weeks: [Week], totalContributions: Int) {
-              self.init(unsafeResultMap: ["__typename": "ContributionCalendar", "weeks": weeks.map { (value: Week) -> ResultMap in value.resultMap }, "totalContributions": totalContributions])
+            public init(weeks: [Week]) {
+              self.init(unsafeResultMap: ["__typename": "ContributionCalendar", "weeks": weeks.map { (value: Week) -> ResultMap in value.resultMap }])
             }
 
             public var __typename: String {
@@ -300,16 +298,6 @@ public extension GRIGAPI {
               }
               set {
                 resultMap.updateValue(newValue.map { (value: Week) -> ResultMap in value.resultMap }, forKey: "weeks")
-              }
-            }
-
-            /// The count of total contributions in the calendar.
-            public var totalContributions: Int {
-              get {
-                return resultMap["totalContributions"]! as! Int
-              }
-              set {
-                resultMap.updateValue(newValue, forKey: "totalContributions")
               }
             }
 

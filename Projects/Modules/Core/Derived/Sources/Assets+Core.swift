@@ -20,6 +20,7 @@ public enum CoreAsset {
   public enum Colors {
     public static let girgGray = CoreColors(name: "GIRG_Gray")
     public static let grigBackground = CoreColors(name: "GRIG_Background")
+    public static let grigBlack = CoreColors(name: "GRIG_Black")
     public static let grigCompetePrimary = CoreColors(name: "GRIG_CompetePrimary")
     public static let grigCompeteSecondary = CoreColors(name: "GRIG_CompeteSecondary")
     public static let grigPrimary = CoreColors(name: "GRIG_Primary")
