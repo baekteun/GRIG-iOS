@@ -75,7 +75,7 @@ private extension UserInteractor {
                 owner.saveCompeteUserIDUseCase.execute(value: name)
                 owner.router?.viewControllable.showLoaf(
                     "\(name)님이 경쟁자로 등록되었습니다.",
-                    state: .info,
+                    state: .success,
                     location: .top
                 )
             }
