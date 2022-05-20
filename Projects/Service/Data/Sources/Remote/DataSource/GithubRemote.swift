@@ -8,7 +8,7 @@ struct GithubRemote {
         let url = URL(string: "https://api.github.com/graphql")!
         let store = ApolloStore(cache: InMemoryNormalizedCache())
         let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["Authorization": "bearer \(ProcessInfo.processInfo.environment["GITHUB"]!)"]
+        config.httpAdditionalHeaders = ["Authorization": "bearer \(ProcessInfo.processInfo.environment["GITHUB"] ?? "")"]
         let session = URLSessionClient(sessionConfiguration: config, callbackQueue: nil)
         let netProvider = NetworkInterceptorProvider(store: store, client: session)
         let transport = RequestChainNetworkTransport(interceptorProvider: netProvider, endpointURL: url)

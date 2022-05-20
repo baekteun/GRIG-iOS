@@ -18,12 +18,13 @@ public protocol UserRouting: ViewableRouting {
 protocol UserPresentable: Presentable {
     var listener: UserPresentableListener? { get set }
     
-    var viewWillDisAppearTrigger: Observable<Void> { get }
+    var viewDidDisAppearTrigger: Observable<Void> { get }
     var githubButtonDidTap: Observable<String> { get }
     var competeButtonDidTap: Observable<String> { get }
 }
 
 public protocol UserListener: AnyObject {
+    func detachUserAndAttachCompete()
     func detachUserRIB()
 }
 
@@ -58,7 +59,7 @@ final class UserInteractor: PresentableInteractor<UserPresentable>, UserInteract
 
 private extension UserInteractor {
     func bindPresenter() {
-        presenter.viewWillDisAppearTrigger
+        presenter.viewDidDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachUserRIB()
             }
@@ -73,11 +74,7 @@ private extension UserInteractor {
         presenter.competeButtonDidTap
             .bind(with: self) { owner, name in
                 owner.saveCompeteUserIDUseCase.execute(value: name)
-                owner.router?.viewControllable.showLoaf(
-                    "\(name)님이 경쟁자로 등록되었습니다.",
-                    state: .success,
-                    location: .top
-                )
+                owner.listener?.detachUserAndAttachCompete()
             }
             .disposeOnDeactivate(interactor: self)
     }

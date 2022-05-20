@@ -47,6 +47,8 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
         
     private let fetchUesrInfoUseCase: FetchUserInfoUseCase
     private let fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase
+    private let fetchMyUserIDUseCase: FetchMyUserIDUseCase
+    private let fetchCompeteUserIDUseCase: FetchCompeteUserIDUseCase
     private let saveMyUserIDUseCase: SaveMyUserIDUseCase
     private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
 
@@ -57,17 +59,19 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
         presenter: CompetePresentable,
         fetchUesrInfoUseCase: FetchUserInfoUseCase = DIContainer.resolve(FetchUserInfoUseCase.self)!,
         fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase = DIContainer.resolve(FetchUserTotalContributionUseCase.self)!,
+        fetchMyUserIDUseCase: FetchMyUserIDUseCase = DIContainer.resolve(FetchMyUserIDUseCase.self)!,
+        fetchCompeteUserIDUseCase: FetchCompeteUserIDUseCase = DIContainer.resolve(FetchCompeteUserIDUseCase.self)!,
         saveMyUserIDUseCase: SaveMyUserIDUseCase = DIContainer.resolve(SaveMyUserIDUseCase.self)!,
-        saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!,
-        my: String,
-        compete: String
+        saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!
     ) {
         self.fetchUesrInfoUseCase = fetchUesrInfoUseCase
         self.fetchUserTotalContributionUseCase = fetchUserTotalContributionUseCase
+        self.fetchMyUserIDUseCase = fetchMyUserIDUseCase
+        self.fetchCompeteUserIDUseCase = fetchCompeteUserIDUseCase
         self.saveMyUserIDUseCase = saveMyUserIDUseCase
         self.saveCompeteUserIDUseCase = saveCompeteUserIDUseCase
-        self.my = my
-        self.compete = compete
+        self.my = fetchMyUserIDUseCase.execute() ?? ""
+        self.compete = fetchCompeteUserIDUseCase.execute() ?? ""
         super.init(presenter: presenter)
         presenter.listener = self
     }
@@ -133,6 +137,14 @@ private extension CompeteInteractor {
                     ).trackActivity(refreshIndicator).asObservable()
                 )
             }
+            .catch({ [weak self] _ in
+                self?.router?.viewControllable.topViewControllable.presentFailureAlert(
+                    title: "유저 정보를 가져오는데 실패했습니다.",
+                    message: "아이디를 확인해주세요!",
+                    style: .alert
+                )
+                return .empty()
+            })
             .bind(to: totalContributionsRelay)
             .disposeOnDeactivate(interactor: self)
         
@@ -148,12 +160,7 @@ private extension CompeteInteractor {
                     ).trackActivity(refreshIndicator).asObservable()
                 )
             }
-            .catch({ [weak self] _ in
-                self?.router?.viewControllable.topViewControllable.presentFailureAlert(
-                    title: "유저 정보를 가져오는데 실패했습니다.",
-                    message: "아이디를 확인해주세요!",
-                    style: .alert
-                )
+            .catch({ _ in
                 return .empty()
             })
             .bind(to: competeUserRelay)

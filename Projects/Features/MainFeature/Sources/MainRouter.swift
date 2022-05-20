@@ -104,21 +104,31 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          detachChild(router)
          aboutRouter = nil
      }
-     func attachCompete(my: String, compete: String) {
-         let router = competeBuilder.build(
-            withListener: interactor,
-            myLogin: my,
-            competeLogin: compete
-         )
-         competeRouter = router
-         attachChild(router)
-         viewControllable.pushViewController(router.viewControllable, animated: true)
+     func attachCompete() {
+        let router = competeBuilder.build(withListener: interactor)
+        competeRouter = router
+        attachChild(router)
+        viewController.pushViewController(router.viewControllable, animated: true)
      }
      func detachCompete() {
          guard let router = competeRouter else { return }
          viewControllable.popViewController(animated: true)
          detachChild(router)
          competeRouter = nil
+     }
+     func detachUserAndAttachCompete() {
+         guard let router = userRouter else { return }
+         viewController.dismiss(animated: true) { [weak self] in
+             guard let self = self else { return }
+             let router = self.competeBuilder.build(
+                withListener: self.interactor
+             )
+             self.competeRouter = router
+             self.attachChild(router)
+             self.viewController.pushViewController(router.viewControllable, animated: true)
+         }
+         detachChild(router)
+         userRouter = nil
      }
      func presentActionSheet() {
          let presentStyle = UIDevice.current.userInterfaceIdiom == .phone ? UIAlertController.Style.actionSheet : .alert

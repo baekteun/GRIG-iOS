@@ -143,12 +143,12 @@ extension MainViewController {
     var userDidSelected: Observable<GRIGAPI.GrigEntityQuery.Data.Ranking> {
         self.rankTableView.rx.modelSelected((Criteria, GRIGAPI.GrigEntityQuery.Data.Ranking).self)
             .map(\.1)
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var nextPageTrigger: Observable<Void> {
         self.rankTableView.rx.reachedBottom(offset: 120)
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var helpButtonDidTap: Observable<Void> {
@@ -158,17 +158,17 @@ extension MainViewController {
                 backButton.tintColor = CoreAsset.Colors.girgGray.color
                 self?.navigationItem.backBarButtonItem = backButton
             })
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var sortButtonDidTap: Observable<Void> {
         self.sortButton.rx.tap
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var refreshTrigger: Observable<Void> {
         self.refreshControl.rx.controlEvent(.valueChanged)
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var competeButtonDidTap: Observable<Void> {
@@ -178,7 +178,7 @@ extension MainViewController {
                 backButton.tintColor = CoreAsset.Colors.grigBlack.color
                 self?.navigationItem.backBarButtonItem = backButton
             })
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+                .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
 }

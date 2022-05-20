@@ -14,8 +14,9 @@ public protocol MainRouting: ViewableRouting {
     func detachSort()
     func attachAbout()
     func detachAbout()
-    func attachCompete(my: String, compete: String)
+    func attachCompete()
     func detachCompete()
+    func detachUserAndAttachCompete()
     func presentActionSheet()
     func presentAlertWithTextField(
         title: String?,
@@ -56,22 +57,16 @@ final class MainInteractor: PresentableInteractor<MainPresentable>, MainInteract
     private let isRefreshingRelay = BehaviorRelay<Bool>(value: false)
     
     private let fetchRankingListUseCase: FetchRankingListUseCase
-    private let fetchMyUserIDUseCase: FetchMyUserIDUseCase
-    private let fetchCompeteUserIDUseCase: FetchCompeteUserIDUseCase
     private let saveMyUserIDUseCase: SaveMyUserIDUseCase
     private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
     
     init(
         presenter: MainPresentable,
         fetchRankingListUseCase: FetchRankingListUseCase = DIContainer.resolve(FetchRankingListUseCase.self)!,
-        fetchMyUserIDUseCase: FetchMyUserIDUseCase = DIContainer.resolve(FetchMyUserIDUseCase.self)!,
-        fetchCompeteUserIDUseCase: FetchCompeteUserIDUseCase = DIContainer.resolve(FetchCompeteUserIDUseCase.self)!,
         saveMyUserIDUseCase: SaveMyUserIDUseCase = DIContainer.resolve(SaveMyUserIDUseCase.self)!,
         saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!
     ) {
         self.fetchRankingListUseCase = fetchRankingListUseCase
-        self.fetchMyUserIDUseCase = fetchMyUserIDUseCase
-        self.fetchCompeteUserIDUseCase = fetchCompeteUserIDUseCase
         self.saveMyUserIDUseCase = saveMyUserIDUseCase
         self.saveCompeteUserIDUseCase = saveCompeteUserIDUseCase
         super.init(presenter: presenter)
@@ -100,6 +95,9 @@ extension MainInteractor {
     }
     func detachCompete() {
         router?.detachCompete()
+    }
+    func detachUserAndAttachCompete() {
+        router?.detachUserAndAttachCompete()
     }
 }
 
@@ -172,26 +170,7 @@ private extension MainInteractor {
         
         presenter.competeButtonDidTap
             .bind(with: self) { owner, _ in
-                let myID = owner.fetchMyUserIDUseCase.execute()
-                let competeID = owner.fetchCompeteUserIDUseCase.execute()
-                guard
-                    let myUserID = myID,
-                    !myUserID.isEmpty,
-                    let competeUserID = competeID,
-                    !competeUserID.isEmpty
-                else {
-                    owner.router?.presentAlertWithTextField(
-                        title: nil,
-                        message: "Github ID를 입력해주세요!",
-                        initialFirstTFValue: myID,
-                        initialSecondTFValue: competeID,
-                        completion: { my, com in
-                            owner.saveMyUserIDUseCase.execute(value: my)
-                            owner.saveCompeteUserIDUseCase.execute(value: com)
-                        })
-                    return
-                }
-                owner.router?.attachCompete(my: myUserID, compete: competeUserID)
+                owner.router?.attachCompete()
             }
             .disposeOnDeactivate(interactor: self)
         

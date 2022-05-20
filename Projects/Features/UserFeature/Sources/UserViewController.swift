@@ -157,13 +157,13 @@ extension UserViewController: PanModalPresentable {
 
 // MARK: - UserPresentable
 extension UserViewController {
-    var viewWillDisAppearTrigger: Observable<Void> {
-        self.rx.viewWillDisAppear
+    var viewDidDisAppearTrigger: Observable<Void> {
+        self.rx.viewDidDisAppear
             .asObservable()
     }
     var githubButtonDidTap: Observable<String> {
         self.githubButton.rx.tap
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
             .compactMap { [weak self] _ in self?.user.nickname }
             .map { "https://github.com/\($0)" }

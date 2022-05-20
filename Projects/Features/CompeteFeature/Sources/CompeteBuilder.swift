@@ -23,11 +23,7 @@ final class CompeteComponent: Component<CompeteDependency> {
 // MARK: - Builder
 
 public protocol CompeteBuildable: Buildable {
-    func build(
-        withListener listener: CompeteListener,
-        myLogin: String,
-        competeLogin: String
-    ) -> CompeteRouting
+    func build(withListener listener: CompeteListener) -> CompeteRouting
 }
 
 public final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable {
@@ -36,18 +32,10 @@ public final class CompeteBuilder: Builder<CompeteDependency>, CompeteBuildable 
         super.init(dependency: dependency)
     }
 
-    public func build(
-        withListener listener: CompeteListener,
-        myLogin: String,
-        competeLogin: String
-    ) -> CompeteRouting {
-        _ = CompeteComponent(dependency: dependency)
+    public func build(withListener listener: CompeteListener) -> CompeteRouting {
+        let component = CompeteComponent(dependency: dependency)
         let viewController = CompeteViewController()
-        let interactor = CompeteInteractor(
-            presenter: viewController,
-            my: myLogin,
-            compete: competeLogin
-        )
+        let interactor = CompeteInteractor(presenter: viewController)
         interactor.listener = listener
         return CompeteRouter(interactor: interactor, viewController: viewController)
     }

@@ -267,14 +267,14 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
 
 extension CompeteViewController {
     var viewWillDisAppearTrigger: Observable<Void> {
-        self.rx.viewWillDisAppear.asObservable()
+        self.rx.viewDidDisAppear.asObservable()
     }
     var viewDidAppearTrigger: Observable<Void> {
         self.rx.viewDidAppear.asObservable()
     }
     var changeIDButtonDidTap: Observable<Void> {
         self.changeIDButton.rx.tap
-            .throttle(.milliseconds(200), latest: true, scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
 }
