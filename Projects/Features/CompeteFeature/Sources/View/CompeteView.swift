@@ -80,7 +80,7 @@ final class CompeteView: UIView {
 // MARK: - UI
 private extension CompeteView {
     func addView() {
-        addSubviews(titleLabel, subTitleLabel, myBarView, myValueLabel, competeBarView, competeValueLabel)
+        addSubviews(titleLabel, subTitleLabel, myBarView, competeBarView, myValueLabel, competeValueLabel)
     }
     func setLayout() {
         titleLabel.snp.makeConstraints {

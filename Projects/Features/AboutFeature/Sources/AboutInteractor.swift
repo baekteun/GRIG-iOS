@@ -15,7 +15,7 @@ public protocol AboutRouting: ViewableRouting {
 
 protocol AboutPresentable: Presentable {
     var listener: AboutPresentableListener? { get set }
-    var viewWillDisAppearTrigger: Observable<Void> { get }
+    var viewDidDisAppearTrigger: Observable<Void> { get }
 }
 
 public protocol AboutListener: AnyObject {
@@ -47,7 +47,7 @@ final class AboutInteractor: PresentableInteractor<AboutPresentable>, AboutInter
 
 private extension AboutInteractor {
     func bindPresenter() {
-        presenter.viewWillDisAppearTrigger
+        presenter.viewDidDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachAboutRIB()
             }

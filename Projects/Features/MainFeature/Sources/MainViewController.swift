@@ -153,11 +153,6 @@ extension MainViewController {
     }
     var helpButtonDidTap: Observable<Void> {
         self.helpButton.rx.tap
-            .do(onNext: { [weak self] _ in
-                let backButton = UIBarButtonItem(title: "back", style: .plain, target: nil, action: nil)
-                backButton.tintColor = CoreAsset.Colors.girgGray.color
-                self?.navigationItem.backBarButtonItem = backButton
-            })
             .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
@@ -173,12 +168,7 @@ extension MainViewController {
     }
     var competeButtonDidTap: Observable<Void> {
         self.competeButton.rx.tap
-            .do(onNext: { [weak self] _ in
-                let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-                backButton.tintColor = CoreAsset.Colors.grigBlack.color
-                self?.navigationItem.backBarButtonItem = backButton
-            })
-                .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
 }

@@ -27,7 +27,7 @@ public protocol CompeteRouting: ViewableRouting {
 protocol CompetePresentable: Presentable {
     var listener: CompetePresentableListener? { get set }
     
-    var viewWillDisAppearTrigger: Observable<Void> { get }
+    var viewDidDisAppearTrigger: Observable<Void> { get }
     var viewDidAppearTrigger: Observable<Void> { get }
     var changeIDButtonDidTap: Observable<Void> { get }
 }
@@ -102,7 +102,7 @@ private extension CompeteInteractor {
             .bind(to: refreshRelay)
             .disposeOnDeactivate(interactor: self)
         
-        presenter.viewWillDisAppearTrigger
+        presenter.viewDidDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachCompete()
             }

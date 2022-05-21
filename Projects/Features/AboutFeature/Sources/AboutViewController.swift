@@ -70,7 +70,7 @@ final class AboutViewController: BaseViewController, AboutPresentable, AboutView
 }
 
 extension AboutViewController {
-    var viewWillDisAppearTrigger: Observable<Void> {
-        self.rx.viewWillDisAppear.asObservable()
+    var viewDidDisAppearTrigger: Observable<Void> {
+        self.rx.viewDidDisAppear.asObservable()
     }
 }

@@ -170,6 +170,7 @@ extension UserViewController {
     }
     var competeButtonDidTap: Observable<String> {
         self.competeButton.rx.tap
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
             .compactMap { [weak self] _ in self?.user.nickname }
     }

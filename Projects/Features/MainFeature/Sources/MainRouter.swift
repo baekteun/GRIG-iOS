@@ -15,6 +15,7 @@ import Utility
 import SortFeature
 import AboutFeature
 import CompeteFeature
+import Core
 
 protocol MainInteractable: Interactable, UserListener, SortListener, AboutListener, CompeteListener {
     var router: MainRouting? { get set }
@@ -96,6 +97,11 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          let router = aboutBuilder.build(withListener: interactor)
          aboutRouter = router
          attachChild(router)
+         
+         let backButton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
+         backButton.tintColor = CoreAsset.Colors.grigBlack.color
+         
+         viewController.uiviewController.navigationItem.backBarButtonItem = backButton
          viewController.pushViewController(router.viewControllable, animated: true)
      }
      func detachAbout() {
@@ -105,10 +111,15 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          aboutRouter = nil
      }
      func attachCompete() {
-        let router = competeBuilder.build(withListener: interactor)
-        competeRouter = router
-        attachChild(router)
-        viewController.pushViewController(router.viewControllable, animated: true)
+         let router = competeBuilder.build(withListener: interactor)
+         competeRouter = router
+         attachChild(router)
+         
+         let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+         backButton.tintColor = CoreAsset.Colors.grigBlack.color
+         
+         viewController.uiviewController.navigationItem.backBarButtonItem = backButton
+         viewController.pushViewController(router.viewControllable, animated: true)
      }
      func detachCompete() {
          guard let router = competeRouter else { return }

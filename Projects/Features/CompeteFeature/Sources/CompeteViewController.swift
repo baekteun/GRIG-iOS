@@ -266,7 +266,7 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
 }
 
 extension CompeteViewController {
-    var viewWillDisAppearTrigger: Observable<Void> {
+    var viewDidDisAppearTrigger: Observable<Void> {
         self.rx.viewDidDisAppear.asObservable()
     }
     var viewDidAppearTrigger: Observable<Void> {
