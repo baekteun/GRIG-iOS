@@ -10,12 +10,14 @@ import RIBs
 import RxSwift
 
 public protocol AboutRouting: ViewableRouting {
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
+    func presentMailScene()
 }
 
 protocol AboutPresentable: Presentable {
     var listener: AboutPresentableListener? { get set }
+    
     var viewDidDisAppearTrigger: Observable<Void> { get }
+    var mailDidTap: Observable<Void> { get }
 }
 
 public protocol AboutListener: AnyObject {
@@ -50,6 +52,12 @@ private extension AboutInteractor {
         presenter.viewDidDisAppearTrigger
             .bind(with: self) { owner, _ in
                 owner.listener?.detachAboutRIB()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.mailDidTap
+            .bind(with: self) { owner, _ in
+                owner.router?.presentMailScene()
             }
             .disposeOnDeactivate(interactor: self)
     }

@@ -14,7 +14,7 @@ protocol AboutInteractable: Interactable {
 }
 
 protocol AboutViewControllable: ViewControllable {
-    // TODO: Declare methods the router invokes to manipulate the view hierarchy.
+    func presentMailScene()
 }
 
 final class AboutRouter: ViewableRouter<AboutInteractable, AboutViewControllable>, AboutRouting {
@@ -23,5 +23,9 @@ final class AboutRouter: ViewableRouter<AboutInteractable, AboutViewControllable
     override init(interactor: AboutInteractable, viewController: AboutViewControllable) {
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
+    }
+    
+    func presentMailScene() {
+        viewController.presentMailScene()
     }
 }
