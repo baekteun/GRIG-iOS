@@ -30,6 +30,7 @@ protocol CompetePresentable: Presentable {
     var viewDidDisAppearTrigger: Observable<Void> { get }
     var viewDidAppearTrigger: Observable<Void> { get }
     var changeIDButtonDidTap: Observable<Void> { get }
+    var viewDidTransitionTrigger: Observable<Void> { get }
 }
 
 public protocol CompeteListener: AnyObject {
@@ -44,16 +45,22 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
     private let totalContributionsRelay = PublishRelay<(Int, Int)>()
     private let refreshRelay = BehaviorRelay<Bool>(value: false)
+    private let hiddenRefreshRelay = PublishRelay<Void>()
         
-    private let fetchUesrInfoUseCase: FetchUserInfoUseCase
+    private let fetchUserInfoUseCase: FetchUserInfoUseCase
     private let fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase
     private let fetchMyUserIDUseCase: FetchMyUserIDUseCase
     private let fetchCompeteUserIDUseCase: FetchCompeteUserIDUseCase
     private let saveMyUserIDUseCase: SaveMyUserIDUseCase
     private let saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase
 
-    private let my: String
-    private let compete: String
+    private var my: String
+    private var compete: String
+    
+    private var myCacheUser: GRIGAPI.GithubUserQuery.Data.User = .init(unsafeResultMap: .init())
+    private var competeCacheUser: GRIGAPI.GithubUserQuery.Data.User = .init(unsafeResultMap: .init())
+    private var myCacheTotal = 0
+    private var competeCacheTotal = 0
     
     init(
         presenter: CompetePresentable,
@@ -64,7 +71,7 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
         saveMyUserIDUseCase: SaveMyUserIDUseCase = DIContainer.resolve(SaveMyUserIDUseCase.self)!,
         saveCompeteUserIDUseCase: SaveCompeteUserIDUseCase = DIContainer.resolve(SaveCompeteUserIDUseCase.self)!
     ) {
-        self.fetchUesrInfoUseCase = fetchUesrInfoUseCase
+        self.fetchUserInfoUseCase = fetchUesrInfoUseCase
         self.fetchUserTotalContributionUseCase = fetchUserTotalContributionUseCase
         self.fetchMyUserIDUseCase = fetchMyUserIDUseCase
         self.fetchCompeteUserIDUseCase = fetchCompeteUserIDUseCase
@@ -110,22 +117,52 @@ private extension CompeteInteractor {
         
         presenter.changeIDButtonDidTap
             .bind(with: self) { owner, _ in
-                owner.router?.presentAlertWithTextField(
-                    title: "아이디 변경",
-                    message: nil,
-                    initialFirstTFValue: owner.my,
-                    initialSecondTFValue: owner.compete,
-                    completion: { [weak self] myID, competeID in
-                        self?.saveMyUserIDUseCase.execute(value: myID)
-                        self?.saveCompeteUserIDUseCase.execute(value: competeID)
-                    })
+                owner.changeIDPresent()
             }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.viewDidAppearTrigger
+            .bind(with: self) { owner, _ in
+                owner.refresh()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.viewDidTransitionTrigger
+            .withUnretained(self)
+            .map { ($0.0.myCacheUser, $0.0.competeCacheUser) }
+            .bind(to: competeUserRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.viewDidTransitionTrigger
+            .withUnretained(self)
+            .map { ($0.0.myCacheTotal, $0.0.competeCacheTotal) }
+            .bind(to: totalContributionsRelay)
             .disposeOnDeactivate(interactor: self)
         
         let to = Date().toISO8601()
         let from = Date().addingTimeInterval(-(86400 * 4)).toISO8601()
         
-        presenter.viewDidAppearTrigger
+        hiddenRefreshRelay
+            .withUnretained(self)
+            .flatMap { owner, _ in
+                Observable.zip(
+                    owner.fetchUserInfoUseCase.execute(
+                        login: owner.my, from: from, to: to
+                    ).trackActivity(refreshIndicator).asObservable(),
+                    owner.fetchUserInfoUseCase.execute(
+                        login: owner.compete, from: from, to: to
+                    ).trackActivity(refreshIndicator).asObservable()
+                )
+            }
+            .do(onNext: { [weak self] s1, s2 in
+                self?.myCacheUser = s1
+                self?.competeCacheUser = s2
+            })
+            .catch { _ in .empty() }
+            .bind(to: competeUserRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        hiddenRefreshRelay
             .withUnretained(self)
             .flatMap { owner, _ in
                 Observable.zip(
@@ -137,33 +174,42 @@ private extension CompeteInteractor {
                     ).trackActivity(refreshIndicator).asObservable()
                 )
             }
+            .do(onNext: { [weak self] s1, s2 in
+                self?.myCacheTotal = s1
+                self?.competeCacheTotal = s2
+            })
             .catch({ [weak self] _ in
                 self?.router?.viewControllable.topViewControllable.presentFailureAlert(
                     title: "유저 정보를 가져오는데 실패했습니다.",
                     message: "아이디를 확인해주세요!",
-                    style: .alert
+                    style: .alert,
+                    actions: [
+                        .init(title: "확인", style: .default),
+                        .init(title: "변경", style: .default, handler: { [weak self] _ in
+                            self?.changeIDPresent()
+                        })
+                    ]
                 )
                 return .empty()
             })
             .bind(to: totalContributionsRelay)
             .disposeOnDeactivate(interactor: self)
-        
-        presenter.viewDidAppearTrigger
-            .withUnretained(self)
-            .flatMap { owner, _ in
-                Observable.zip(
-                    owner.fetchUesrInfoUseCase.execute(
-                        login: owner.my, from: from, to: to
-                    ).trackActivity(refreshIndicator).asObservable(),
-                    owner.fetchUesrInfoUseCase.execute(
-                        login: owner.compete, from: from, to: to
-                    ).trackActivity(refreshIndicator).asObservable()
-                )
-            }
-            .catch({ _ in
-                return .empty()
+    }
+    func changeIDPresent() {
+        self.router?.presentAlertWithTextField(
+            title: "아이디 변경",
+            message: nil,
+            initialFirstTFValue: self.my,
+            initialSecondTFValue: self.compete,
+            completion: { [weak self] myID, competeID in
+                self?.saveMyUserIDUseCase.execute(value: myID)
+                self?.saveCompeteUserIDUseCase.execute(value: competeID)
+                self?.my = myID
+                self?.compete = competeID
+                self?.refresh()
             })
-            .bind(to: competeUserRelay)
-            .disposeOnDeactivate(interactor: self)
+    }
+    func refresh() {
+        hiddenRefreshRelay.accept(())
     }
 }

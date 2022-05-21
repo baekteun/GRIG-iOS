@@ -115,6 +115,15 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
 
     weak var listener: CompetePresentableListener?
     
+    private let viewDidTransitionRelay = PublishRelay<Void>()
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+            self?.viewDidTransitionRelay.accept(())
+        }
+    }
+    
     
     // MARK: - UI
     override func addView() {
@@ -254,12 +263,11 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         alert.textFields?[1].placeholder = "상대 Github ID"
         alert.textFields?[1].text = initialSecondTFValue
         alert.addAction(.init(title: "취소", style: .cancel))
-        alert.addAction(.init(title: "저장", style: .default, handler: { [weak self] _ in
+        alert.addAction(.init(title: "저장", style: .default, handler: { _ in
             completion(
                 alert.textFields?[0].text ?? "",
                 alert.textFields?[1].text ?? ""
             )
-            self?.viewDidAppear(true)
         }))
         self.uiviewController.present(alert, animated: true, completion: nil)
     }
@@ -276,6 +284,9 @@ extension CompeteViewController {
         self.changeIDButton.rx.tap
             .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
+    }
+    var viewDidTransitionTrigger: Observable<Void> {
+        self.viewDidTransitionRelay.asObservable()
     }
 }
 

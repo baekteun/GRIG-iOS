@@ -23,4 +23,8 @@ public extension Reactive where Base: UIViewController {
         let source = methodInvoked(#selector(Base.viewDidAppear(_:))).map { _ in }
         return ControlEvent(events: source)
     }
+    var viewWillTransition: ControlEvent<Void> {
+        let source = methodInvoked(#selector(Base.viewWillTransition(to:with:))).map { _ in }
+        return ControlEvent(events: source)
+    }
 }
