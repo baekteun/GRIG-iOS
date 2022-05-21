@@ -13,6 +13,7 @@ import RxRelay
 import Foundation
 import ThirdPartyLib
 import Utility
+import UIKit
 
 public protocol CompeteRouting: ViewableRouting {
     func presentAlertWithTextField(
@@ -22,6 +23,7 @@ public protocol CompeteRouting: ViewableRouting {
         initialSecondTFValue: String?,
         completion: @escaping ((String, String) -> Void)
     )
+    func presentShare(image: UIImage)
 }
 
 protocol CompetePresentable: Presentable {
@@ -31,6 +33,7 @@ protocol CompetePresentable: Presentable {
     var viewDidAppearTrigger: Observable<Void> { get }
     var changeIDButtonDidTap: Observable<Void> { get }
     var viewDidTransitionTrigger: Observable<Void> { get }
+    var shareButtonDidTap: Observable<UIImage> { get }
 }
 
 public protocol CompeteListener: AnyObject {
@@ -137,6 +140,12 @@ private extension CompeteInteractor {
             .withUnretained(self)
             .map { ($0.0.myCacheTotal, $0.0.competeCacheTotal) }
             .bind(to: totalContributionsRelay)
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.shareButtonDidTap
+            .bind(with: self) { owner, image in
+                owner.router?.presentShare(image: image)
+            }
             .disposeOnDeactivate(interactor: self)
         
         let to = Date().toISO8601()

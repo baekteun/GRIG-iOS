@@ -102,11 +102,11 @@ final class UserViewController: BaseViewController, UserPresentable, UserViewCon
             $0.top.equalTo(nicknameLabel.snp.bottom)
         }
         firstSeparatorView.snp.makeConstraints {
-            $0.width.equalTo(0.25)
+            $0.width.equalTo(0.6)
             $0.height.equalTo(30)
         }
         secondSeparatorView.snp.makeConstraints {
-            $0.width.equalTo(0.25)
+            $0.width.equalTo(0.6)
             $0.height.equalTo(30)
         }
         statStackView.snp.makeConstraints {

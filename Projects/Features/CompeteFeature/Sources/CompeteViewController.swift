@@ -112,6 +112,7 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         target: nil,
         action: nil
     )
+    private let shareButton = UIBarButtonItem(image: .init(systemName: "square.and.arrow.up")?.tintColor(CoreAsset.Colors.grigBlack.color), style: .plain, target: nil, action: nil)
 
     weak var listener: CompetePresentableListener?
     
@@ -199,7 +200,7 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
     override func configureNavigation() {
         self.navigationItem.title = "경쟁"
         self.navigationController?.navigationBar.tintColor = CoreAsset.Colors.grigBlack.color
-        self.navigationItem.setRightBarButton(changeIDButton, animated: true)
+        self.navigationItem.setRightBarButtonItems([changeIDButton, shareButton], animated: true)
     }
     
     override func bindListener() {
@@ -271,6 +272,11 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         }))
         self.uiviewController.present(alert, animated: true, completion: nil)
     }
+    func presentShare(image: UIImage) {
+        let items: [Any] = [image]
+        let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        self.topViewControllable.uiviewController.present(vc, animated: true, completion: nil)
+    }
 }
 
 extension CompeteViewController {
@@ -287,6 +293,13 @@ extension CompeteViewController {
     }
     var viewDidTransitionTrigger: Observable<Void> {
         self.viewDidTransitionRelay.asObservable()
+    }
+    var shareButtonDidTap: Observable<UIImage> {
+        self.shareButton.rx.tap
+            .withUnretained(self)
+            .delay(.milliseconds(2), scheduler: MainScheduler.asyncInstance)
+            .compactMap { $0.0.navigationController?.view.asImage() }
+            .asObservable()
     }
 }
 

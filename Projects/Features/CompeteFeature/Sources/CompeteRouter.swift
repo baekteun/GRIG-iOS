@@ -7,6 +7,7 @@
 //
 
 import RIBs
+import UIKit
 
 protocol CompeteInteractable: Interactable {
     var router: CompeteRouting? { get set }
@@ -21,6 +22,7 @@ protocol CompeteViewControllable: ViewControllable {
         initialSecondTFValue: String?,
         completion: @escaping ((String, String) -> Void)
     )
+    func presentShare(image: UIImage)
 }
 
 final class CompeteRouter: ViewableRouter<CompeteInteractable, CompeteViewControllable>, CompeteRouting {
@@ -45,5 +47,8 @@ final class CompeteRouter: ViewableRouter<CompeteInteractable, CompeteViewContro
            initialSecondTFValue: initialSecondTFValue,
            completion: completion
         )
+    }
+    func presentShare(image: UIImage) {
+        viewController.presentShare(image: image)
     }
 }
