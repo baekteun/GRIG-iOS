@@ -152,8 +152,7 @@ private extension CompeteInteractor {
         let from = Date().addingTimeInterval(-(86400 * 4)).toISO8601()
         
         hiddenRefreshRelay
-            .withUnretained(self)
-            .flatMap { owner, _ in
+            .bind(with: self) { owner, _ in
                 Observable.zip(
                     owner.fetchUserInfoUseCase.execute(
                         login: owner.my, from: from, to: to
@@ -162,18 +161,17 @@ private extension CompeteInteractor {
                         login: owner.compete, from: from, to: to
                     ).trackActivity(refreshIndicator).asObservable()
                 )
+                .do(onNext: { s1, s2 in
+                    owner.myCacheUser = s1
+                    owner.competeCacheUser = s2
+                }).catch { _ in .empty() }
+                    .bind(to: owner.competeUserRelay)
+                    .disposeOnDeactivate(interactor: owner)
             }
-            .do(onNext: { [weak self] s1, s2 in
-                self?.myCacheUser = s1
-                self?.competeCacheUser = s2
-            })
-            .catch { _ in .empty() }
-            .bind(to: competeUserRelay)
             .disposeOnDeactivate(interactor: self)
         
         hiddenRefreshRelay
-            .withUnretained(self)
-            .flatMap { owner, _ in
+            .bind(with: self) { owner, _ in
                 Observable.zip(
                     owner.fetchUserTotalContributionUseCase.execute(
                         login: owner.my
@@ -182,27 +180,26 @@ private extension CompeteInteractor {
                         login: owner.compete
                     ).trackActivity(refreshIndicator).asObservable()
                 )
-            }
-            .do(onNext: { [weak self] s1, s2 in
-                self?.myCacheTotal = s1
-                self?.competeCacheTotal = s2
-            })
-            .catch({ [weak self] _ in
-                self?.router?.viewControllable.topViewControllable.presentFailureAlert(
-                    title: "유저 정보를 가져오는데 실패했습니다.",
-                    message: "아이디를 확인해주세요!",
-                    style: .alert,
-                    actions: [
-                        .init(title: "확인", style: .default),
-                        .init(title: "변경", style: .default, handler: { [weak self] _ in
-                            self?.changeIDPresent()
-                        })
-                    ]
-                )
-                return .empty()
-            })
-            .bind(to: totalContributionsRelay)
-            .disposeOnDeactivate(interactor: self)
+                .do(onNext: { s1, s2 in
+                    owner.myCacheTotal = s1
+                    owner.competeCacheTotal = s2
+                }).catch { _ in
+                    owner.router?.viewControllable.topViewControllable.presentFailureAlert(
+                        title: "유저 정보를 가져오는데 실패했습니다.",
+                        message: "아이디를 확인해주세요!",
+                        style: .alert,
+                        actions: [
+                            .init(title: "확인", style: .cancel),
+                            .init(title: "변경", style: .default, handler: { _ in
+                                owner.changeIDPresent()
+                            })
+                        ]
+                    )
+                    return .empty()
+                }.bind(to: owner.totalContributionsRelay)
+                    .disposeOnDeactivate(interactor: owner)
+            }.disposeOnDeactivate(interactor: self)
+        
     }
     func changeIDPresent() {
         self.router?.presentAlertWithTextField(
