@@ -309,29 +309,27 @@ private extension CompeteViewController {
         my: GRIGAPI.GithubUserQuery.Data.User,
         compete: GRIGAPI.GithubUserQuery.Data.User
     ) {
-        var dateValues: [String] = []
         let myData = my.contributionsCollection.contributionCalendar.weeks
         var myLineEntry = [ChartDataEntry]()
         myData.forEach {
-            $0.contributionDays.enumerated().forEach { item in
+            $0.contributionDays.forEach { item in
                 myLineEntry.append(
                     .init(
-                        x: Double(item.offset),
-                        y: Double(item.element.contributionCount)
+                        x: Double(myLineEntry.count),
+                        y: Double(item.contributionCount)
                     )
                 )
-                dateValues.append(item.element.date.map { String($0) }[5...].joined(separator: ""))
             }
         }
         
         let competeData = compete.contributionsCollection.contributionCalendar.weeks
         var competeLineEntry = [ChartDataEntry]()
-        competeData.forEach { item in
-            item.contributionDays.enumerated().forEach { item in
+        competeData.forEach {
+            $0.contributionDays.forEach { item in
                 competeLineEntry.append(
                     .init(
-                        x: Double(item.offset),
-                        y: Double(item.element.contributionCount)
+                        x: Double(competeLineEntry.count),
+                        y: Double(item.contributionCount)
                     )
                 )
             }
@@ -346,7 +344,6 @@ private extension CompeteViewController {
         
         let lineData = LineChartData(dataSets: [myLineDataSet, competeLineDataSet])
         
-        commitChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: dateValues)
         commitChartView.data = lineData
         commitChartView.animate(yAxisDuration: 1, easingOption: .linear)
     }
