@@ -189,8 +189,8 @@ private extension CompeteInteractor {
                         message: "아이디를 확인해주세요!",
                         style: .alert,
                         actions: [
-                            .init(title: "확인", style: .cancel),
-                            .init(title: "변경", style: .default, handler: { _ in
+                            .init(title: "닫기", style: .cancel),
+                            .init(title: "확인", style: .default, handler: { _ in
                                 owner.changeIDPresent()
                             })
                         ]
