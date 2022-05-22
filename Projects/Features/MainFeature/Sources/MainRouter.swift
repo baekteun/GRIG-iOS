@@ -23,13 +23,6 @@ protocol MainInteractable: Interactable, UserListener, SortListener, AboutListen
 }
 protocol MainViewControllable: ViewControllable {
     func CustomPresent(_ viewController: ViewControllable)
-    func presentAlertWithTextField(
-        title: String?,
-        message: String?,
-        initialFirstTFValue: String?,
-        initialSecondTFValue: String?,
-        completion: @escaping ((String, String) -> Void)
-    )
 }
 
 final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, MainRouting {
@@ -131,6 +124,8 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          guard let router = userRouter else { return }
          viewController.dismiss(animated: true) { [weak self] in
              guard let self = self else { return }
+             self.detachChild(router)
+             self.userRouter = nil
              let router = self.competeBuilder.build(
                 withListener: self.interactor
              )
@@ -138,8 +133,6 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
              self.attachChild(router)
              self.viewController.pushViewController(router.viewControllable, animated: true)
          }
-         detachChild(router)
-         userRouter = nil
      }
      func presentActionSheet() {
          let presentStyle = UIDevice.current.userInterfaceIdiom == .phone ? UIAlertController.Style.actionSheet : .alert
@@ -155,20 +148,5 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
             }),
             .init(title: "Cancel", style: .cancel, handler: nil)
          ])
-     }
-     func presentAlertWithTextField(
-        title: String?,
-        message: String?,
-        initialFirstTFValue: String?,
-        initialSecondTFValue: String?,
-        completion: @escaping ((String, String) -> Void)
-     ) {
-         viewController.presentAlertWithTextField(
-            title: title,
-            message: message,
-            initialFirstTFValue: initialFirstTFValue,
-            initialSecondTFValue: initialSecondTFValue,
-            completion: completion
-         )
      }
 }

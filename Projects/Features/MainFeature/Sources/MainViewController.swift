@@ -179,27 +179,4 @@ extension MainViewController {
         viewController.uiviewController.modalTransitionStyle = .crossDissolve
         self.topViewControllable.present(viewController, animated: true, completion: nil)
     }
-    func presentAlertWithTextField(
-        title: String?,
-        message: String?,
-        initialFirstTFValue: String?,
-        initialSecondTFValue: String?,
-        completion: @escaping ((String, String) -> Void)
-    ) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addTextField()
-        alert.addTextField()
-        alert.textFields?[0].placeholder = "내 Github ID"
-        alert.textFields?[0].text = initialFirstTFValue
-        alert.textFields?[1].placeholder = "상대 Github ID"
-        alert.textFields?[1].text = initialSecondTFValue
-        alert.addAction(.init(title: "취소", style: .cancel))
-        alert.addAction(.init(title: "저장", style: .default, handler: { _ in
-            completion(
-                alert.textFields?[0].text ?? "",
-                alert.textFields?[1].text ?? ""
-            )
-        }))
-        self.topViewControllable.uiviewController.present(alert, animated: true, completion: nil)
-    }
 }

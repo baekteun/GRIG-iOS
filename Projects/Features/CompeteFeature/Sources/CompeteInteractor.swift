@@ -60,8 +60,8 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     private var my: String
     private var compete: String
     
-    private var myCacheUser: GRIGAPI.GithubUserQuery.Data.User = .init(unsafeResultMap: .init())
-    private var competeCacheUser: GRIGAPI.GithubUserQuery.Data.User = .init(unsafeResultMap: .init())
+    private var myCacheUser: GRIGAPI.GithubUserQuery.Data.User?
+    private var competeCacheUser: GRIGAPI.GithubUserQuery.Data.User?
     private var myCacheTotal = 0
     private var competeCacheTotal = 0
     
@@ -131,9 +131,14 @@ private extension CompeteInteractor {
             .disposeOnDeactivate(interactor: self)
         
         presenter.viewDidTransitionTrigger
-            .withUnretained(self)
-            .map { ($0.0.myCacheUser, $0.0.competeCacheUser) }
-            .bind(to: competeUserRelay)
+            .bind(with: self, onNext: { owner, _ in
+                guard let my = owner.myCacheUser,
+                      let compete = owner.competeCacheUser
+                else {
+                    return
+                }
+                owner.competeUserRelay.accept((my, compete))
+            })
             .disposeOnDeactivate(interactor: self)
         
         presenter.viewDidTransitionTrigger

@@ -58,6 +58,7 @@ final class CompeteView: UIView {
         myValue: Int,
         competeValue: Int
     ) {
+        if myValue == 0 || competeValue == 0 { return }
         let total: CGFloat = CGFloat(myValue) + CGFloat(competeValue)
         let myPer: CGFloat = CGFloat(myValue) / total
         let comPer: CGFloat = CGFloat(competeValue) / total

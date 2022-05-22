@@ -18,13 +18,6 @@ public protocol MainRouting: ViewableRouting {
     func detachCompete()
     func detachUserAndAttachCompete()
     func presentActionSheet()
-    func presentAlertWithTextField(
-        title: String?,
-        message: String?,
-        initialFirstTFValue: String?,
-        initialSecondTFValue: String?,
-        completion: @escaping ((String, String) -> Void)
-    )
 }
 
 protocol MainPresentable: Presentable {
