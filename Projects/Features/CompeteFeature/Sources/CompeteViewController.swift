@@ -259,9 +259,9 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addTextField()
         alert.addTextField()
-        alert.textFields?[0].placeholder = "내 Github ID"
+        alert.textFields?[0].placeholder = "My Github ID"
         alert.textFields?[0].text = initialFirstTFValue
-        alert.textFields?[1].placeholder = "상대 Github ID"
+        alert.textFields?[1].placeholder = "Someone Github ID"
         alert.textFields?[1].text = initialSecondTFValue
         alert.addAction(.init(title: "취소", style: .cancel))
         alert.addAction(.init(title: "저장", style: .default, handler: { _ in
