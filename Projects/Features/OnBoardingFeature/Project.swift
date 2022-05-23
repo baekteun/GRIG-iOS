@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.staticFramework(
-    name: "OnBoardingFeature",
+    name: "OnboardingFeature",
     dependencies: [
         .Project.Features.CommonFeature
     ],
