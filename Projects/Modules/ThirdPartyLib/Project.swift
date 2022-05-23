@@ -22,6 +22,7 @@ let project = Project.framework(
         .SPM.CDMarkdownKit,
         .SPM.NVActivityIndicatorView,
         .SPM.Loaf,
-        .SPM.Charts
+        .SPM.Charts,
+        .SPM.PaperOnboarding,
     ]
 )
