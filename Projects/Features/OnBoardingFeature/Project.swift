@@ -2,9 +2,9 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.staticFramework(
-    name: "RootFeature",
+    name: "OnBoardingFeature",
     dependencies: [
-        .Project.Features.MainFeature,
-        .Project.Features.OnBoardingFeature
-    ]
+        .Project.Features.CommonFeature
+    ],
+    hasDemoApp: true
 )
