@@ -187,6 +187,10 @@ private extension UserViewController {
         followStatView.setStatValue(value: user.following ?? 0)
         followerStatView.setStatValue(value: user.followers ?? 0)
         commitStatView.setStatValue(value: user.contributions ?? 0)
-        bioLabel.text = user.bio
+        if user.bio == nil || user.bio?.isEmpty ?? false {
+            bioLabel.text = "현재 bio가 등록되어있지 않아요!"
+        } else {
+            bioLabel.text = user.bio
+        }
     }
 }
