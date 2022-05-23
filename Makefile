@@ -2,7 +2,11 @@ generate:
 	tuist fetch
 	tuist generate
 
-clean:
+reset:
 	tuist clean
+	rm -rf **/*.xcodeproj
+	rm -rf *.xcworkspace
+
+clean:
 	rm -rf **/*.xcodeproj
 	rm -rf *.xcworkspace
