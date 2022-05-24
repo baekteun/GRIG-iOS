@@ -5,7 +5,6 @@
 //  Created by 최형우 on 2022/04/20.
 //  Copyright © 2022 baegteun. All rights reserved.
 //
-
 import RIBs
 import RxSwift
 import UIKit
@@ -16,7 +15,7 @@ protocol RootPresentableListener: AnyObject {
     // interactor class.
 }
 
-final class RootViewController: UINavigationController, RootPresentable, RootViewControllable {
+final class RootViewController: UIViewController, RootPresentable, RootViewControllable {
 
     weak var listener: RootPresentableListener?
 }

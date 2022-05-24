@@ -15,7 +15,7 @@ final class OnboardingCell: BaseCollectionViewCell<UIImage> {
     override func setLayout() {
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(70)
+            $0.top.equalToSuperview().offset(30)
             $0.width.equalTo(bounds.width - 32)
             $0.height.equalTo(bounds.height * 0.65)
         }

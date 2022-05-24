@@ -15,6 +15,7 @@ import PaperOnboarding
 import Core
 import RxDataSources
 import RxRelay
+import ViewAnimator
 
 protocol OnboardingPresentableListener: AnyObject {
     var displayedOnboard: BehaviorRelay<Onboard> { get }
@@ -25,7 +26,6 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
     private let onboardingCollectionView = UICollectionView(frame: .zero, collectionViewLayout: .init()).then {
         let bounds = UIScreen.main.bounds
         let lay = UICollectionViewFlowLayout()
-        lay.itemSize = .init(width: bounds.width, height: bounds.height)
         lay.scrollDirection = .horizontal
         lay.minimumLineSpacing = 0
         $0.isPagingEnabled = true
@@ -54,18 +54,40 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
         $0.layer.cornerRadius = 31
         $0.backgroundColor = CoreAsset.Colors.grigOnboardMain.color
         $0.setImage(.init(systemName: "arrow.right")?.tintColor(.white), for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.semanticContentAttribute = .forceRightToLeft
+    }
+    private let pageControl = UIPageControl().then {
+        $0.numberOfPages = 4
+        $0.pageIndicatorTintColor = CoreAsset.Colors.grigOnboardMain.color.withAlphaComponent(0.3)
+        $0.currentPageIndicatorTintColor = CoreAsset.Colors.grigOnboardMain.color
+        $0.currentPage = 0
+    }
+    private let skipButton = UIButton().then {
+        $0.setImage(.init(systemName: "xmark")?.tintColor(.black), for: .normal)
     }
     
     var listener: OnboardingPresentableListener?
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .init()
+    }
+    
     // MARK: - UI
+    override func setUp() {
+        onboardingCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
+    }
     override func addView() {
-        view.addSubviews(onboardingCollectionView, frameView, nextButton)
-        frameView.addSubviews(titleLabel, descriptionLabel)
+        view.addSubviews(onboardingCollectionView, frameView, nextButton, skipButton)
+        frameView.addSubviews(titleLabel, descriptionLabel, pageControl)
     }
     override func setLayout() {
         onboardingCollectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        skipButton.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(50)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
         }
         frameView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
@@ -84,9 +106,16 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
         }
+        pageControl.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(25)
+            $0.centerY.equalTo(nextButton)
+        }
     }
     override func configureVC() {
         view.backgroundColor = .init(red: 1, green: 0.93, blue: 0.87, alpha: 1)
+    }
+    override func configureNavigation() {
+        self.navigationController?.navigationBar.isHidden = true
     }
     
     override func bindListener() {
@@ -111,6 +140,21 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
             .bind(with: self, onNext: { owner, onboard in
                 owner.titleLabel.text = onboard.titleDisplay
                 owner.descriptionLabel.text = onboard.descriptionDisplay
+                owner.nextButton.setTitle(onboard == .sort ? "시작하기" : nil, for: .normal)
+                UIView.animate(withDuration: 0.5) {
+                    if onboard == .sort {
+                        owner.nextButton.snp.updateConstraints {
+                            $0.width.equalTo(150)
+                        }
+                    } else {
+                        owner.nextButton.snp.updateConstraints {
+                            $0.width.equalTo(62)
+                        }
+                    }
+                    owner.nextButton.superview?.layoutIfNeeded()
+                }
+                
+                
             })
             .disposed(by: disposeBag)
     }
@@ -122,7 +166,25 @@ extension OnboardingViewController {
             .withUnretained(self)
             .compactMap { owner, _ in
                 let width = owner.onboardingCollectionView.frame.width
-                return Int(owner.onboardingCollectionView.contentOffset.x / width)
+                guard
+                    !width.isNaN && !width.isInfinite && width != 0
+                else {
+                    return 0
+                }
+                let index = Int(owner.onboardingCollectionView.contentOffset.x / width)
+                owner.pageControl.currentPage = index
+                return index
             }
+    }
+    var xButtonTrigger: Observable<Void> {
+        skipButton.rx.tap
+            .debounce(.milliseconds(200), scheduler: MainScheduler.asyncInstance)
+            .asObservable()
+    }
+}
+
+extension OnboardingViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: bounds.width, height: bounds.height - view.safeAreaInsets.bottom - view.safeAreaInsets.top)
     }
 }

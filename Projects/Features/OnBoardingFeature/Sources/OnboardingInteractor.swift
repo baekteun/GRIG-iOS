@@ -21,6 +21,7 @@ protocol OnboardingPresentable: Presentable {
     var listener: OnboardingPresentableListener? { get set }
     
     var nextpageTrigger: Observable<Int> { get }
+    var xButtonTrigger: Observable<Void> { get }
 }
 
 public protocol OnboardingListener: AnyObject {
