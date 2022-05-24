@@ -23,6 +23,7 @@ public enum CoreAsset {
     public static let grigBlack = CoreColors(name: "GRIG_Black")
     public static let grigCompetePrimary = CoreColors(name: "GRIG_CompetePrimary")
     public static let grigCompeteSecondary = CoreColors(name: "GRIG_CompeteSecondary")
+    public static let grigOnboardMain = CoreColors(name: "GRIG_OnboardMain")
     public static let grigPrimary = CoreColors(name: "GRIG_Primary")
     public static let grigPrimaryTextColor = CoreColors(name: "GRIG_PrimaryTextColor")
     public static let grigSecondaryTextColor = CoreColors(name: "GRIG_SecondaryTextColor")
@@ -32,6 +33,10 @@ public enum CoreAsset {
     public static let grigCompeteIcon = CoreImages(name: "GRIG_CompeteIcon")
     public static let grigGithubIcon = CoreImages(name: "GRIG_GithubIcon")
     public static let grigLogo = CoreImages(name: "GRIG_Logo")
+    public static let grigOnboard1 = CoreImages(name: "GRIG_Onboard1")
+    public static let grigOnboard2 = CoreImages(name: "GRIG_Onboard2")
+    public static let grigOnboard3 = CoreImages(name: "GRIG_Onboard3")
+    public static let grigOnboard4 = CoreImages(name: "GRIG_Onboard4")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
