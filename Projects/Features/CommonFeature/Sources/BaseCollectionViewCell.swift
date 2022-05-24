@@ -9,7 +9,7 @@ open class BaseCollectionViewCell<T>: UICollectionViewCell, Reusable {
         model = nil
     }
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         addView()
         setLayout()
@@ -19,11 +19,11 @@ open class BaseCollectionViewCell<T>: UICollectionViewCell, Reusable {
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public func addView(){}
-    public func setLayout(){}
-    public func configureCell(){}
-    public var model: T? {
+    open func addView(){}
+    open func setLayout(){}
+    open func configureCell(){}
+    open var model: T? {
         didSet { if let model = model { bind(model) } }
     }
-    public func bind(_ model: T){}
+    open func bind(_ model: T){}
 }
