@@ -10,8 +10,10 @@ import RIBs
 import RxSwift
 import Utility
 import RxRelay
+import Domain
+import ThirdPartyLib
 
-protocol OnboardingRouting: ViewableRouting {
+public protocol OnboardingRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
@@ -21,7 +23,7 @@ protocol OnboardingPresentable: Presentable {
     var nextpageTrigger: Observable<Int> { get }
 }
 
-protocol OnboardingListener: AnyObject {
+public protocol OnboardingListener: AnyObject {
     
 }
 
@@ -33,10 +35,16 @@ final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, 
 
     weak var router: OnboardingRouting?
     weak var listener: OnboardingListener?
+    
+    private let saveOnboardingUseCase: SaveOnboardingUseCase
 
     // TODO: Add additional dependencies to constructor. Do not perform any logic
     // in constructor.
-    override init(presenter: OnboardingPresentable) {
+    init(
+        presenter: OnboardingPresentable,
+        saveOnboardingUseCase: SaveOnboardingUseCase = DIContainer.resolve(SaveOnboardingUseCase.self)!
+    ) {
+        self.saveOnboardingUseCase = saveOnboardingUseCase
         super.init(presenter: presenter)
         presenter.listener = self
     }

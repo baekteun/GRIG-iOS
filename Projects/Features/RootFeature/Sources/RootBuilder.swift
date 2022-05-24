@@ -8,6 +8,7 @@
 
 import RIBs
 import MainFeature
+import OnboardingFeature
 
 public protocol RootDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
@@ -25,7 +26,7 @@ final class RootComponent: Component<RootDependency> {
         super.init(dependency: dependency)
     }
 }
-extension RootComponent: MainDependency {}
+extension RootComponent: MainDependency, OnboardingDependency {}
 
 // MARK: - Builder
 
@@ -45,8 +46,10 @@ public final class RootBuilder: Builder<RootDependency>, RootBuildable {
         let component = RootComponent(dependency: dependency, viewController: viewController)
         let interactor = RootInteractor(presenter: viewController)
         let mainBuilder = MainBuilder(dependency: component)
+        let onboardingBuilder = OnboardingBuilder(dependency: component)
         return RootRouter(
             mainBuilder: mainBuilder,
+            onboardingBuilder: onboardingBuilder,
             interactor: interactor,
             viewController: viewController
         )

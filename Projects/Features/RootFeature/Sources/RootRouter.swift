@@ -9,11 +9,12 @@
 import ThirdPartyLib
 import RIBs
 import MainFeature
+import OnboardingFeature
 import Network
 import Loaf
 import Core
 
-protocol RootInteractable: Interactable, MainListener {
+protocol RootInteractable: Interactable, MainListener, OnboardingListener {
     var router: RootRouting? { get set }
     var listener: RootListener? { get set }
 }
@@ -24,13 +25,16 @@ protocol RootViewControllable: ViewControllable {
 
 final class RootRouter: LaunchRouter<RootInteractable, RootViewControllable>, RootRouting {
     private let mainBuilder: MainBuildable
+    private let onboardingBuilder: OnboardingBuildable
     
     init(
         mainBuilder: MainBuildable,
+        onboardingBuilder: OnboardingBuildable,
         interactor: RootInteractable,
         viewController: RootViewControllable
     ) {
         self.mainBuilder = mainBuilder
+        self.onboardingBuilder = onboardingBuilder
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
     }

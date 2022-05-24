@@ -8,7 +8,7 @@
 
 import RIBs
 
-protocol OnboardingDependency: Dependency {
+public protocol OnboardingDependency: Dependency {
     // TODO: Declare the set of dependencies required by this RIB, but cannot be
     // created by this RIB.
 }
@@ -20,18 +20,18 @@ final class OnboardingComponent: Component<OnboardingDependency> {
 
 // MARK: - Builder
 
-protocol OnboardingBuildable: Buildable {
+public protocol OnboardingBuildable: Buildable {
     func build(withListener listener: OnboardingListener) -> OnboardingRouting
 }
 
-final class OnboardingBuilder: Builder<OnboardingDependency>, OnboardingBuildable {
+public final class OnboardingBuilder: Builder<OnboardingDependency>, OnboardingBuildable {
 
-    override init(dependency: OnboardingDependency) {
+    public override init(dependency: OnboardingDependency) {
         super.init(dependency: dependency)
     }
 
-    func build(withListener listener: OnboardingListener) -> OnboardingRouting {
-        let component = OnboardingComponent(dependency: dependency)
+    public func build(withListener listener: OnboardingListener) -> OnboardingRouting {
+        _ = OnboardingComponent(dependency: dependency)
         let viewController = OnboardingViewController()
         let interactor = OnboardingInteractor(presenter: viewController)
         interactor.listener = listener
