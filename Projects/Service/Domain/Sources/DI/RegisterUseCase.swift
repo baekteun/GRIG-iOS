@@ -59,7 +59,7 @@ public extension DIContainer {
             )
         }
         DIContainer.register(SaveOnboardingUseCase.self) { r in
-            ShouldOnboardingUseCase(
+            SaveOnboardingUseCase(
                 onboardingRepository: r.resolve(OnboardingRepository.self)!
             )
         }
