@@ -8,6 +8,8 @@
 
 import RIBs
 import RxSwift
+import Utility
+import RxRelay
 
 protocol OnboardingRouting: ViewableRouting {
     // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
@@ -15,14 +17,19 @@ protocol OnboardingRouting: ViewableRouting {
 
 protocol OnboardingPresentable: Presentable {
     var listener: OnboardingPresentableListener? { get set }
-    // TODO: Declare methods the interactor can invoke the presenter to present data.
+    
+    var nextpageTrigger: Observable<Int> { get }
 }
 
 protocol OnboardingListener: AnyObject {
-    // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
+    
 }
 
 final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, OnboardingInteractable, OnboardingPresentableListener {
+    
+    private var page = 0
+    
+    private let onboardRelay = BehaviorRelay<Onboard>(value: .rank)
 
     weak var router: OnboardingRouting?
     weak var listener: OnboardingListener?
@@ -36,11 +43,25 @@ final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, 
 
     override func didBecomeActive() {
         super.didBecomeActive()
-        // TODO: Implement business logic here.
+        bindPresenter()
     }
 
     override func willResignActive() {
         super.willResignActive()
         // TODO: Pause any business logic.
+    }
+}
+
+extension OnboardingInteractor {
+    var displayedOnboard: BehaviorRelay<Onboard> { onboardRelay }
+}
+
+private extension OnboardingInteractor {
+    func bindPresenter() {
+        presenter.nextpageTrigger
+            .distinctUntilChanged()
+            .map { Onboard.allCases[$0] }
+            .bind(to: onboardRelay)
+            .disposeOnDeactivate(interactor: self)
     }
 }
