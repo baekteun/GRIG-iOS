@@ -53,5 +53,15 @@ public extension DIContainer {
                 githubRepository: r.resolve(GithubRepository.self)!
             )
         }
+        DIContainer.register(ShouldOnboardingUseCase.self) { r in
+            ShouldOnboardingUseCase(
+                onboardingRepository: r.resolve(OnboardingRepository.self)!
+            )
+        }
+        DIContainer.register(SaveOnboardingUseCase.self) { r in
+            ShouldOnboardingUseCase(
+                onboardingRepository: r.resolve(OnboardingRepository.self)!
+            )
+        }
     }
 }

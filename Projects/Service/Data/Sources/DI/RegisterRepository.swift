@@ -7,11 +7,14 @@ public extension DIContainer {
         DIContainer.register(GRIGRepository.self) { _ in
             GRIGRepositoryImpl()
         }
-        DIContainer.register(GithubRepository.self) { r in
+        DIContainer.register(GithubRepository.self) { _ in
             GithubRepositoryImpl()
         }
-        DIContainer.register(UserIDRepository.self) { r in
+        DIContainer.register(UserIDRepository.self) { _ in
             UserIDRepositoryImpl(userDefaults: .standard)
+        }
+        DIContainer.register(OnboardingRepository.self) { _ in
+            OnboardingRepositoryImpl(userDefault: .standard)
         }
     }
 }
