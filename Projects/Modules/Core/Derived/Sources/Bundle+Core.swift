@@ -8,7 +8,7 @@ import Foundation
 private class BundleFinder {}
 
 extension Foundation.Bundle {
-    /// Since Core is a framework, the bundle containing the resources is copied into the final product.
+    /// Since Core is a framework, the bundle for classes within this module can be used directly.
     static var module: Bundle = {
         return Bundle(for: BundleFinder.self)
     }()

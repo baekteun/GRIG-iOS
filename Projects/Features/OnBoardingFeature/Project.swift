@@ -5,6 +5,5 @@ let project = Project.staticFramework(
     name: "OnboardingFeature",
     dependencies: [
         .Project.Features.CommonFeature
-    ],
-    hasDemoApp: true
+    ]
 )

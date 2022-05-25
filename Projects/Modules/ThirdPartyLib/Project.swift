@@ -23,6 +23,5 @@ let project = Project.framework(
         .SPM.NVActivityIndicatorView,
         .SPM.Loaf,
         .SPM.Charts,
-        .SPM.PaperOnboarding,
     ]
 )

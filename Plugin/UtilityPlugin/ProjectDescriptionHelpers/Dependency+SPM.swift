@@ -27,5 +27,4 @@ public extension TargetDependency.SPM {
     static let Loaf = TargetDependency.external(name: "Loaf")
     static let Inject = TargetDependency.external(name: "Inject")
     static let Charts = TargetDependency.external(name: "Charts")
-    static let PaperOnboarding = TargetDependency.external(name: "PaperOnboarding")
 }

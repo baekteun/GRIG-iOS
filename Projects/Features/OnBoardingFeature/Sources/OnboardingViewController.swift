@@ -11,7 +11,6 @@ import RxSwift
 import UIKit
 import CommonFeature
 import Utility
-import PaperOnboarding
 import Core
 import RxDataSources
 import RxRelay
@@ -83,10 +82,10 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
     }
     override func setLayout() {
         onboardingCollectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
         skipButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
         }
         frameView.snp.makeConstraints {
