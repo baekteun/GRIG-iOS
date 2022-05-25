@@ -12,9 +12,9 @@ import Utility
 import RxRelay
 import Domain
 import ThirdPartyLib
+import Foundation
 
 public protocol OnboardingRouting: ViewableRouting {
-    // TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
 protocol OnboardingPresentable: Presentable {
@@ -22,10 +22,11 @@ protocol OnboardingPresentable: Presentable {
     
     var nextpageTrigger: Observable<Int> { get }
     var xButtonTrigger: Observable<Void> { get }
+    var nextButtonDidTap: Observable<Void> { get }
 }
 
 public protocol OnboardingListener: AnyObject {
-    
+    func detachOnboardingAndAttachMain()
 }
 
 final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, OnboardingInteractable, OnboardingPresentableListener {
@@ -33,6 +34,7 @@ final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, 
     private var page = 0
     
     private let onboardRelay = BehaviorRelay<Onboard>(value: .rank)
+    private let indexPathRelay = BehaviorRelay<IndexPath>(value: .init(item: 0, section: 0))
 
     weak var router: OnboardingRouting?
     weak var listener: OnboardingListener?
@@ -57,20 +59,46 @@ final class OnboardingInteractor: PresentableInteractor<OnboardingPresentable>, 
 
     override func willResignActive() {
         super.willResignActive()
-        // TODO: Pause any business logic.
     }
+    
 }
 
 extension OnboardingInteractor {
     var displayedOnboard: BehaviorRelay<Onboard> { onboardRelay }
+    var nextButtonPaging: BehaviorRelay<IndexPath> { indexPathRelay }
 }
 
 private extension OnboardingInteractor {
     func bindPresenter() {
         presenter.nextpageTrigger
             .distinctUntilChanged()
+            .bind(with: self) { owner, page in
+                owner.page = page
+            }
+            .disposeOnDeactivate(interactor: self)
+
+        presenter.nextpageTrigger
+            .distinctUntilChanged()
             .map { Onboard.allCases[$0] }
             .bind(to: onboardRelay)
+            .disposeOnDeactivate(interactor: self)
+
+        presenter.xButtonTrigger
+            .bind(with: self) { owner, _ in
+                owner.saveOnboardingUseCase.execute(onboarding: true)
+                owner.listener?.detachOnboardingAndAttachMain()
+            }
+            .disposeOnDeactivate(interactor: self)
+
+        presenter.nextButtonDidTap
+            .bind(with: self) { owner, _ in
+                if owner.onboardRelay.value == .sort {
+                    owner.saveOnboardingUseCase.execute(onboarding: true)
+                    owner.listener?.detachOnboardingAndAttachMain()
+                } else {
+                    owner.indexPathRelay.accept(.init(item: owner.page+1, section: 0))
+                }
+            }
             .disposeOnDeactivate(interactor: self)
     }
 }

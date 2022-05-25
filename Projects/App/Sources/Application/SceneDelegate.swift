@@ -16,6 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
         self.window = window
+        UserDefaults.standard.removeObject(forKey: "onboarding")
         let launchRouter = RootBuilder(dependency: AppComponent()).build()
         startMonitoring()
         self.launchRouter = launchRouter

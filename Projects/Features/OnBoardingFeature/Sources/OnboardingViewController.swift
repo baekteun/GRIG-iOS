@@ -19,12 +19,12 @@ import ViewAnimator
 
 protocol OnboardingPresentableListener: AnyObject {
     var displayedOnboard: BehaviorRelay<Onboard> { get }
+    var nextButtonPaging: BehaviorRelay<IndexPath> { get }
 }
 
 final class OnboardingViewController: BaseViewController, OnboardingPresentable, OnboardingViewControllable {
     // MARK: - Properties
     private let onboardingCollectionView = UICollectionView(frame: .zero, collectionViewLayout: .init()).then {
-        let bounds = UIScreen.main.bounds
         let lay = UICollectionViewFlowLayout()
         lay.scrollDirection = .horizontal
         lay.minimumLineSpacing = 0
@@ -67,11 +67,7 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
         $0.setImage(.init(systemName: "xmark")?.tintColor(.black), for: .normal)
     }
     
-    var listener: OnboardingPresentableListener?
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .init()
-    }
+    weak var listener: OnboardingPresentableListener?
     
     // MARK: - UI
     override func setUp() {
@@ -86,7 +82,7 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
             $0.edges.equalToSuperview()
         }
         skipButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(50)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
         }
         frameView.snp.makeConstraints {
@@ -114,9 +110,6 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
     override func configureVC() {
         view.backgroundColor = .init(red: 1, green: 0.93, blue: 0.87, alpha: 1)
     }
-    override func configureNavigation() {
-        self.navigationController?.navigationBar.isHidden = true
-    }
     
     override func bindListener() {
         let ds = RxCollectionViewSectionedReloadDataSource<OnboardingSection> { _, tv, ip, item in
@@ -135,25 +128,24 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
         .bind(to: onboardingCollectionView.rx.items(dataSource: ds))
         .disposed(by: disposeBag)
         
+        listener?.nextButtonPaging
+            .bind(with: self, onNext: { owner, ip in
+                owner.onboardingCollectionView.scrollToItem(at: ip, at: .centeredHorizontally, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         listener?.displayedOnboard
             .distinctUntilChanged()
             .bind(with: self, onNext: { owner, onboard in
                 owner.titleLabel.text = onboard.titleDisplay
                 owner.descriptionLabel.text = onboard.descriptionDisplay
                 owner.nextButton.setTitle(onboard == .sort ? "시작하기" : nil, for: .normal)
-                UIView.animate(withDuration: 0.5) {
-                    if onboard == .sort {
-                        owner.nextButton.snp.updateConstraints {
-                            $0.width.equalTo(150)
-                        }
-                    } else {
-                        owner.nextButton.snp.updateConstraints {
-                            $0.width.equalTo(62)
-                        }
+                UIView.animate(withDuration: 0.5) { [weak self] in
+                    self?.nextButton.snp.updateConstraints {
+                        $0.width.equalTo(onboard == .sort ? 150 : 62)
                     }
-                    owner.nextButton.superview?.layoutIfNeeded()
+                    self?.view.layoutIfNeeded()
                 }
-                
                 
             })
             .disposed(by: disposeBag)
@@ -164,7 +156,7 @@ extension OnboardingViewController {
     var nextpageTrigger: Observable<Int> {
         onboardingCollectionView.rx.didScroll
             .withUnretained(self)
-            .compactMap { owner, _ in
+            .map { owner, _ in
                 let width = owner.onboardingCollectionView.frame.width
                 guard
                     !width.isNaN && !width.isInfinite && width != 0
@@ -179,6 +171,11 @@ extension OnboardingViewController {
     var xButtonTrigger: Observable<Void> {
         skipButton.rx.tap
             .debounce(.milliseconds(200), scheduler: MainScheduler.asyncInstance)
+            .asObservable()
+    }
+    var nextButtonDidTap: Observable<Void> {
+        nextButton.rx.tap
+            .debounce(.milliseconds(50), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
 }

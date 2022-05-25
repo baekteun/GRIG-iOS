@@ -13,6 +13,7 @@ import Loaf
 import Core
 import OnboardingFeature
 import UIKit
+import Utility
 
 protocol RootInteractable: Interactable, MainListener, OnboardingListener {
     var router: RootRouting? { get set }
@@ -57,21 +58,38 @@ extension RootRouter {
         let router = onboardingBuilder.build(withListener: interactor)
         attachChild(router)
         onboardingRouter = router
-        let vc = UINavigationController(rootViewController: router.viewControllable.uiviewController)
+        let vc = router.viewControllable.uiviewController
         vc.modalTransitionStyle = .crossDissolve
         vc.modalPresentationStyle = .overFullScreen
         viewControllable.uiviewController.present(vc, animated: true, completion: nil)
     }
     func detachMain() {
         guard let router = mainRouter else { return }
-        viewController.dismiss(animated: false, completion: nil)
+        viewControllable.dismiss(animated: false, completion: nil)
         detachChild(router)
         mainRouter = nil
     }
     func detachOnboarding() {
+        
         guard let router = onboardingRouter else { return }
-        viewController.dismiss(animated: false, completion: nil)
+        viewControllable.dismiss(animated: false, completion: nil)
         detachChild(router)
         onboardingRouter = nil
+    }
+    
+    func detachOnboardingAndAttachMain() {
+        guard let router = onboardingRouter else { return }
+        viewControllable.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.detachChild(router)
+            
+            let router = self.mainBuilder.build(withListener: self.interactor)
+            self.attachChild(router)
+            self.mainRouter = router
+            let vc = UINavigationController(root: router.viewControllable)
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overFullScreen
+            self.viewControllable.present(vc, animated: true, completion: nil)
+        }
     }
 }

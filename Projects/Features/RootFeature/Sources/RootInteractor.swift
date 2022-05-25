@@ -15,6 +15,7 @@ public protocol RootRouting: ViewableRouting {
     func attachOnboarding()
     func detachMain()
     func detachOnboarding()
+    func detachOnboardingAndAttachMain()
 }
 
 protocol RootPresentable: Presentable {
@@ -51,5 +52,9 @@ final class RootInteractor: PresentableInteractor<RootPresentable>, RootInteract
 
     override func willResignActive() {
         super.willResignActive()
+    }
+    
+    func detachOnboardingAndAttachMain() {
+        router?.detachOnboardingAndAttachMain()
     }
 }
