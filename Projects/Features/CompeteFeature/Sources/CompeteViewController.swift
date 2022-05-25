@@ -275,6 +275,8 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
     func presentShare(image: UIImage) {
         let items: [Any] = [image]
         let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        vc.popoverPresentationController?.sourceView = view
+        vc.popoverPresentationController?.barButtonItem = shareButton
         self.topViewControllable.uiviewController.present(vc, animated: true, completion: nil)
     }
 }
