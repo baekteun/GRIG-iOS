@@ -69,6 +69,10 @@ final class OnboardingViewController: BaseViewController, OnboardingPresentable,
     
     weak var listener: OnboardingPresentableListener?
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return [.portrait, .portraitUpsideDown]
+    }
+    
     // MARK: - UI
     override func setUp() {
         onboardingCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
