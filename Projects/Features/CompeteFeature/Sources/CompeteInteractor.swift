@@ -34,6 +34,7 @@ protocol CompetePresentable: Presentable {
     var changeIDButtonDidTap: Observable<Void> { get }
     var viewDidTransitionTrigger: Observable<Void> { get }
     var shareButtonDidTap: Observable<UIImage> { get }
+    var completeButtonDidTap: Observable<(String, String)> { get }
 }
 
 public protocol CompeteListener: AnyObject {
@@ -45,10 +46,11 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
     weak var router: CompeteRouting?
     weak var listener: CompeteListener?
     
-    private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)>()
-    private let totalContributionsRelay = PublishRelay<(Int, Int)>()
+    private let competeUserRelay = PublishRelay<(GRIGAPI.GithubUserQuery.Data.User?, GRIGAPI.GithubUserQuery.Data.User?)>()
+    private let totalContributionsRelay = PublishRelay<(Int?, Int?)>()
     private let refreshRelay = BehaviorRelay<Bool>(value: false)
     private let hiddenRefreshRelay = PublishRelay<Void>()
+    private let userIDsRelay = PublishRelay<(String?, String?)>()
         
     private let fetchUserInfoUseCase: FetchUserInfoUseCase
     private let fetchUserTotalContributionUseCase: FetchUserTotalContributionUseCase
@@ -98,9 +100,10 @@ final class CompeteInteractor: PresentableInteractor<CompetePresentable>, Compet
 }
 
 extension CompeteInteractor {
-    var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { competeUserRelay }
-    var totalContributions: PublishRelay<(Int, Int)> { totalContributionsRelay }
+    var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User?, GRIGAPI.GithubUserQuery.Data.User?)> { competeUserRelay }
+    var totalContributions: PublishRelay<(Int?, Int?)> { totalContributionsRelay }
     var isLoading: BehaviorRelay<Bool> { refreshRelay }
+    var userIDs: PublishRelay<(String?, String?)> { userIDsRelay }
 }
 
 private extension CompeteInteractor {
@@ -121,6 +124,16 @@ private extension CompeteInteractor {
         presenter.changeIDButtonDidTap
             .bind(with: self) { owner, _ in
                 owner.changeIDPresent()
+            }
+            .disposeOnDeactivate(interactor: self)
+        
+        presenter.completeButtonDidTap
+            .bind(with: self) { owner, ids in
+                owner.saveMyUserIDUseCase.execute(value: ids.0)
+                owner.my = ids.0
+                owner.saveCompeteUserIDUseCase.execute(value: ids.1)
+                owner.compete = ids.1
+                owner.refresh()
             }
             .disposeOnDeactivate(interactor: self)
         
@@ -169,8 +182,11 @@ private extension CompeteInteractor {
                 .do(onNext: { s1, s2 in
                     owner.myCacheUser = s1
                     owner.competeCacheUser = s2
-                }).catch { _ in .empty() }
-                    .bind(to: owner.competeUserRelay)
+                    owner.fetchCurrentUserIDs()
+                }).catch { _ in
+                    owner.fetchCurrentUserIDs()
+                    return .empty()
+                }.bind(to: owner.competeUserRelay)
                     .disposeOnDeactivate(interactor: owner)
             }
             .disposeOnDeactivate(interactor: self)
@@ -186,20 +202,18 @@ private extension CompeteInteractor {
                     ).trackActivity(refreshIndicator).asObservable()
                 )
                 .do(onNext: { s1, s2 in
-                    owner.myCacheTotal = s1
-                    owner.competeCacheTotal = s2
+                    owner.fetchCurrentUserIDs()
+                    if let s1 = s1, let s2 = s2 {
+                        owner.myCacheTotal = s1
+                        owner.competeCacheTotal = s2                        
+                    }
                 }).catch { _ in
                     owner.router?.viewControllable.topViewControllable.presentFailureAlert(
-                        title: "유저 정보를 가져오는데 실패했습니다.",
-                        message: "아이디를 확인해주세요!",
-                        style: .alert,
-                        actions: [
-                            .init(title: "닫기", style: .cancel),
-                            .init(title: "확인", style: .default, handler: { _ in
-                                owner.changeIDPresent()
-                            })
-                        ]
+                        title: "알 수 없는 오류가 일어났습니다",
+                        message: "네트워크 등을 확인해주세요",
+                        style: .alert
                     )
+                    owner.fetchCurrentUserIDs()
                     return .empty()
                 }.bind(to: owner.totalContributionsRelay)
                     .disposeOnDeactivate(interactor: owner)
@@ -222,5 +236,11 @@ private extension CompeteInteractor {
     }
     func refresh() {
         hiddenRefreshRelay.accept(())
+    }
+    func fetchCurrentUserIDs() {
+        self.userIDsRelay.accept((
+            self.fetchMyUserIDUseCase.execute(),
+            self.fetchCompeteUserIDUseCase.execute()
+        ))
     }
 }

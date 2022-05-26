@@ -6,7 +6,7 @@ public protocol GithubRepository {
         login: String,
         from: String,
         to: String
-    ) -> Single<GRIGAPI.GithubUserQuery.Data.User>
+    ) -> Single<GRIGAPI.GithubUserQuery.Data.User?>
     
-    func fetchUserTotalContribution(login: String) -> Single<Int>
+    func fetchUserTotalContribution(login: String) -> Single<Int?>
 }

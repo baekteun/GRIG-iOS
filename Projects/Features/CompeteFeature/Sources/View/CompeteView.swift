@@ -58,23 +58,21 @@ final class CompeteView: UIView {
         myValue: Int,
         competeValue: Int
     ) {
-        if myValue == 0 || competeValue == 0 { return }
+        myValueLabel.text = "\(myValue)"
+        competeValueLabel.text = "\(competeValue)"
+        if myValue == 0 {
+            graphAnimate(my: 0, compete: self.frame.width - 34)
+            return
+        } else if competeValue == 0 {
+            graphAnimate(my: self.frame.width - 34, compete: 0)
+            return
+        }
         let total: CGFloat = CGFloat(myValue) + CGFloat(competeValue)
         let myPer: CGFloat = CGFloat(myValue) / total
         let comPer: CGFloat = CGFloat(competeValue) / total
         let myWidth = (self.frame.width-34) * myPer
         let comWidth = (self.frame.width-34) * comPer
-        UIView.animate(withDuration: 1) { [weak self] in
-            self?.myBarView.snp.updateConstraints {
-                $0.width.equalTo(myWidth)
-            }
-            self?.competeBarView.snp.updateConstraints {
-                $0.width.equalTo(comWidth)
-            }
-            self?.layoutIfNeeded()
-        }
-        myValueLabel.text = "\(myValue)"
-        competeValueLabel.text = "\(competeValue)"
+        graphAnimate(my: myWidth, compete: comWidth)
     }
 }
 
@@ -116,6 +114,17 @@ private extension CompeteView {
     func configureView() {
         layer.cornerRadius = 10
         backgroundColor = CoreAsset.Colors.grigWhite.color
+    }
+    func graphAnimate(my: CGFloat, compete: CGFloat) {
+        UIView.animate(withDuration: 1) { [weak self] in
+            self?.myBarView.snp.updateConstraints {
+                $0.width.equalTo(my)
+            }
+            self?.competeBarView.snp.updateConstraints {
+                $0.width.equalTo(compete)
+            }
+            self?.layoutIfNeeded()
+        }
     }
 }
 

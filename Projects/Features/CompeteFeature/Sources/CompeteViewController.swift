@@ -18,11 +18,13 @@ import Charts
 import Domain
 import RxRelay
 import Kingfisher
+import RxKeyboard
 
 protocol CompetePresentableListener: AnyObject {
-    var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User, GRIGAPI.GithubUserQuery.Data.User)> { get }
-    var totalContributions: PublishRelay<(Int, Int)> { get }
+    var competeUser: PublishRelay<(GRIGAPI.GithubUserQuery.Data.User?, GRIGAPI.GithubUserQuery.Data.User?)> { get }
+    var totalContributions: PublishRelay<(Int?, Int?)> { get }
     var isLoading: BehaviorRelay<Bool> { get }
+    var userIDs: PublishRelay<(String?, String?)> { get }
 }
 
 final class CompeteViewController: BaseViewController, CompetePresentable, CompeteViewControllable {
@@ -33,10 +35,11 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
     // MARK: - Properties
     private let scrollView = UIScrollView()
     private let contentView = UIView()
+    private let idView = UIView()
     private let myProfileImageView = UIImageView().then {
         $0.layer.borderColor = CoreAsset.Colors.grigCompetePrimary.color.cgColor
         $0.layer.borderWidth = 6
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 44
         $0.clipsToBounds = true
         $0.layer.masksToBounds = true
@@ -49,7 +52,7 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
     private let competeProfileImageView = UIImageView().then {
         $0.layer.borderColor = CoreAsset.Colors.grigCompeteSecondary.color.cgColor
         $0.layer.borderWidth = 6
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 44
         $0.clipsToBounds = true
         $0.layer.masksToBounds = true
@@ -113,6 +116,46 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         action: nil
     )
     private let shareButton = UIBarButtonItem(image: .init(systemName: "square.and.arrow.up")?.tintColor(CoreAsset.Colors.grigBlack.color), style: .plain, target: nil, action: nil)
+    
+    private let notFoundImageView = UIImageView(image: CoreAsset.Images.grigSword.image.withRenderingMode(.alwaysOriginal)).then {
+        $0.isHidden = true
+    }
+    private let notFoundDescriptionLabel = UILabel().then {
+        $0.text = """
+경쟁 분석표를 보기 위해서는
+Github ID를 입력해야 합니다.
+"""
+        $0.textAlignment = .center
+        $0.numberOfLines = 0
+        $0.font = .systemFont(ofSize: 17)
+        $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
+        $0.isHidden = true
+    }
+    private let myUserIDTextField = UITextField().then {
+        $0.font = .systemFont(ofSize: 17)
+        $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
+        $0.placeholder = "My Github ID"
+        $0.layer.cornerRadius = 6
+        $0.setUnderLine(color: .lightGray)
+        $0.leftSpace(16)
+        $0.isHidden = true
+    }
+    private let competeUserIDTextField = UITextField().then {
+        $0.font = .systemFont(ofSize: 17)
+        $0.textColor = CoreAsset.Colors.grigPrimaryTextColor.color
+        $0.placeholder = "Somone Github ID"
+        $0.layer.cornerRadius = 6
+        $0.setUnderLine(color: .lightGray)
+        $0.leftSpace(16)
+        $0.isHidden = true
+    }
+    private let completeButton = UIButton().then {
+        $0.backgroundColor = CoreAsset.Colors.grigCompetePrimary.color
+        $0.layer.cornerRadius = 6
+        $0.setTitle("완료", for: .normal)
+        $0.setTitleColor(CoreAsset.Colors.grigWhite.color, for: .normal)
+        $0.isHidden = true
+    }
 
     weak var listener: CompetePresentableListener?
     
@@ -124,12 +167,16 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
             self?.viewDidTransitionRelay.accept(())
         }
     }
-    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+      super.touchesEnded(touches, with: event)
+      self.view.endEditing(true)
+    }
     
     // MARK: - UI
     override func addView() {
         competeStackView.addArrangeSubviews(commitCompeteView, followerCompeteView, followCompeteView, prCompeteView, issueCompeteView)
-        view.addSubviews(scrollView)
+        view.addSubviews(scrollView, idView)
+        idView.addSubviews(notFoundImageView, notFoundDescriptionLabel, myUserIDTextField, competeUserIDTextField, completeButton)
         scrollView.addSubviews(contentView)
         chartTitleView.addSubviews(chartTitleLabel, chartSubTitleLabel)
         commitView.addSubviews(commitChartView)
@@ -138,6 +185,10 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
     override func setLayout() {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        idView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.centerX.top.bottom.equalToSuperview()
         }
         contentView.snp.makeConstraints {
             $0.width.equalToSuperview()
@@ -193,9 +244,40 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
             $0.top.equalTo(commitView.snp.bottom).offset(16)
             $0.bottom.equalToSuperview().offset(-12)
         }
+        
+        notFoundImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(view.safeAreaInsets.top + 60)
+            $0.centerX.equalToSuperview()
+        }
+        notFoundDescriptionLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(notFoundImageView.snp.bottom).offset(24)
+        }
+        completeButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().offset(-60)
+            $0.height.equalTo(48)
+        }
+        competeUserIDTextField.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(completeButton.snp.top).offset(-48)
+            $0.height.equalTo(44)
+        }
+        myUserIDTextField.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(competeUserIDTextField.snp.top).offset(-16)
+            $0.height.equalTo(44)
+        }
     }
     override func configureVC() {
         view.backgroundColor = CoreAsset.Colors.grigBackground.color
+        if traitCollection.userInterfaceStyle == .dark {
+            myUserIDTextField.backgroundColor = .darkGray
+            competeUserIDTextField.backgroundColor = .darkGray
+        }
     }
     override func configureNavigation() {
         self.navigationItem.title = "경쟁"
@@ -213,8 +295,13 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         listener?.totalContributions
             .asObservable()
             .bind(with: self, onNext: { owner, commit in
-                let my = commit.0
-                let compete = commit.1
+                guard
+                    let my = commit.0,
+                    let compete = commit.1
+                else {
+                    owner.commitCompeteView.setValue(myValue: 1, competeValue: 1)
+                    return
+                }
                 owner.commitCompeteView.setValue(myValue: my, competeValue: compete)
             })
             .disposed(by: disposeBag)
@@ -222,8 +309,14 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
         listener?.competeUser
             .asObservable()
             .bind(with: self, onNext: { owner, user in
-                let my = user.0
-                let compete = user.1
+                guard
+                    let my = user.0,
+                    let compete = user.1
+                else {
+                    owner.showInvalidUsername()
+                    return
+                }
+                owner.hideInvalidUsername()
                 owner.myProfileImageView.kf.setImage(with: URL(string: my.avatarUrl) ?? .none)
                 owner.myNameLabel.text = my.login
                 owner.competeProfileImageView.kf.setImage(with: URL(string: compete.avatarUrl) ?? .none)
@@ -246,6 +339,31 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
                     competeValue: compete.issues.totalCount
                 )
             })
+            .disposed(by: disposeBag)
+        
+        listener?.userIDs
+            .bind(with: self, onNext: { owner, ids in
+                owner.myUserIDTextField.text = ids.0
+                owner.competeUserIDTextField.text = ids.1
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .filter { [weak self] _ in
+                self?.presentedViewController == nil
+            }
+            .asObservable()
+            .bind(with: self) { owner, height in
+                UIView.animate(withDuration: 0) {
+                    owner.idView.snp.updateConstraints {
+                        $0.bottom.equalToSuperview().offset(-height)
+                    }
+                    owner.notFoundImageView.snp.updateConstraints {
+                        $0.top.equalToSuperview().offset((owner.view.safeAreaInsets.top) - height)
+                    }
+                    owner.view.layoutIfNeeded()
+                }
+            }
             .disposed(by: disposeBag)
     }
     
@@ -270,7 +388,7 @@ final class CompeteViewController: BaseViewController, CompetePresentable, Compe
                 alert.textFields?[1].text ?? ""
             )
         }))
-        self.uiviewController.present(alert, animated: true, completion: nil)
+        self.topViewControllable.uiviewController.present(alert, animated: true, completion: nil)
     }
     func presentShare(image: UIImage) {
         let items: [Any] = [image]
@@ -290,7 +408,7 @@ extension CompeteViewController {
     }
     var changeIDButtonDidTap: Observable<Void> {
         self.changeIDButton.rx.tap
-            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
+            .debounce(.milliseconds(200), scheduler: MainScheduler.asyncInstance)
             .asObservable()
     }
     var viewDidTransitionTrigger: Observable<Void> {
@@ -298,9 +416,17 @@ extension CompeteViewController {
     }
     var shareButtonDidTap: Observable<UIImage> {
         self.shareButton.rx.tap
+            .debounce(.microseconds(200), scheduler: MainScheduler.asyncInstance)
             .withUnretained(self)
             .delay(.milliseconds(2), scheduler: MainScheduler.asyncInstance)
             .compactMap { $0.0.navigationController?.view.asImage() }
+            .asObservable()
+    }
+    var completeButtonDidTap: Observable<(String, String)> {
+        self.completeButton.rx.tap
+            .debounce(.milliseconds(200), scheduler: MainScheduler.asyncInstance)
+            .withUnretained(self)
+            .map { ($0.0.myUserIDTextField.text ?? "", $0.0.competeUserIDTextField.text ?? "") }
             .asObservable()
     }
 }
@@ -348,6 +474,24 @@ private extension CompeteViewController {
         
         commitChartView.data = lineData
         commitChartView.animate(yAxisDuration: 1, easingOption: .linear)
+    }
+    func showInvalidUsername() {
+        contentView.subviews.forEach {
+            $0.isHidden = true
+        }
+        idView.subviews.forEach {
+            $0.isHidden = false
+        }
+        idView.isHidden = false
+    }
+    func hideInvalidUsername() {
+        contentView.subviews.forEach {
+            $0.isHidden = false
+        }
+        idView.subviews.forEach {
+            $0.isHidden = true
+        }
+        idView.isHidden = true
     }
 }
 

@@ -7,7 +7,7 @@ public struct FetchUserTotalContributionUseCase {
     
     private let githubRepository: GithubRepository
     
-    public func execute(login: String) -> Single<Int> {
+    public func execute(login: String) -> Single<Int?> {
         githubRepository.fetchUserTotalContribution(login: login)
     }
 }

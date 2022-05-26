@@ -37,6 +37,7 @@ public enum CoreAsset {
     public static let grigOnboard2 = CoreImages(name: "GRIG_Onboard2")
     public static let grigOnboard3 = CoreImages(name: "GRIG_Onboard3")
     public static let grigOnboard4 = CoreImages(name: "GRIG_Onboard4")
+    public static let grigSword = CoreImages(name: "GRIG_Sword")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

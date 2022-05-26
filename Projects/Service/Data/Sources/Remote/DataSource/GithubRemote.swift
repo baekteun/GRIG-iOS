@@ -22,7 +22,7 @@ struct GithubRemote {
         login: String,
         from: String,
         to: String
-    ) -> Single<GRIGAPI.GithubUserQuery.Data.User> {
+    ) -> Single<GRIGAPI.GithubUserQuery.Data.User?> {
         .create { single in
             client.fetch(
                 query: GRIGAPI.GithubUserQuery(
@@ -36,7 +36,7 @@ struct GithubRemote {
                     if let user = data.data?.user {
                         single(.success(user))
                     } else {
-                        single(.failure(GraphQLError.init(.init())))
+                        single(.success(nil))
                     }
                 case let .failure(err):
                     single(.failure(err))
@@ -46,7 +46,7 @@ struct GithubRemote {
         }
     }
     
-    func fetchUserTotalContribution(login: String) -> Single<Int> {
+    func fetchUserTotalContribution(login: String) -> Single<Int?> {
         .create { single in
             client.fetch(query: GRIGAPI.TotalContributionQuery(login: login)) { res in
                 switch res {
@@ -54,7 +54,7 @@ struct GithubRemote {
                     if let contribution = data.data?.user?.contributionsCollection.contributionCalendar.totalContributions {
                         single(.success(contribution))
                     } else {
-                        single(.failure(GraphQLError(.init())))
+                        single(.success(nil))
                     }
                 case let .failure(err):
                     single(.failure(err))
