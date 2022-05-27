@@ -11,6 +11,7 @@ import Domain
 import RxDataSources
 import Core
 import NVActivityIndicatorView
+import SafariServices
 
 protocol MainPresentableListener: AnyObject {
     var rankingListSection: BehaviorRelay<[RankTableSection]> { get }
@@ -178,5 +179,9 @@ extension MainViewController {
         viewController.uiviewController.modalPresentationStyle = .overFullScreen
         viewController.uiviewController.modalTransitionStyle = .crossDissolve
         self.topViewControllable.present(viewController, animated: true, completion: nil)
+    }
+    func presentUserSafari(url: URL) {
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
     }
 }

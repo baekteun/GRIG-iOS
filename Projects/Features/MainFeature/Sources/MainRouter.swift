@@ -23,6 +23,7 @@ protocol MainInteractable: Interactable, UserListener, SortListener, AboutListen
 }
 protocol MainViewControllable: ViewControllable {
     func CustomPresent(_ viewController: ViewControllable)
+    func presentUserSafari(url: URL)
 }
 
 final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, MainRouting {
@@ -138,15 +139,22 @@ final class MainRouter: ViewableRouter<MainInteractable, MainViewControllable>, 
          let presentStyle = UIDevice.current.userInterfaceIdiom == .phone ? UIAlertController.Style.actionSheet : .alert
          viewControllable.presentAlert(title: "GRIG", message: "Github Rank In GSM", style: presentStyle, actions: [
             .init(title: "Join", style: .default, handler: { [weak self] _ in
-                self?.viewControllable.openSafariWithUrl(url: "https://github.com/login/oauth/authorize?client_id=685ffb52e4dd768b3f66&redirect_uri=https://d6ui2fy5uj.execute-api.ap-northeast-2.amazonaws.com/api/auth&scope=user:email")
+                guard let url = URL(string: "https://github.com/login/oauth/authorize?client_id=685ffb52e4dd768b3f66&redirect_uri=https://d6ui2fy5uj.execute-api.ap-northeast-2.amazonaws.com/api/auth&scope=user:email") else {
+                    return
+                }
+                self?.presentUserSafari(url: url)
             }),
             .init(title: "Open API", style: .default, handler: { [weak self] _ in
-                self?.viewControllable.openSafariWithUrl(url: "https://github.com/GRI-G/GRIG-API")
+                guard let url = URL(string: "https://github.com/GRI-G/GRIG-API") else { return }
+                self?.presentUserSafari(url: url)
             }),
             .init(title: "About", style: .default, handler: { [weak self] _ in
                 self?.attachAbout()
             }),
             .init(title: "Cancel", style: .cancel, handler: nil)
          ])
+     }
+     func presentUserSafari(url: URL) {
+         viewController.presentUserSafari(url: url)
      }
 }

@@ -6,6 +6,7 @@ import Utility
 import Swinject
 import CommonFeature
 import ThirdPartyLib
+import Foundation
 
 public protocol MainRouting: ViewableRouting {
     func attachUser(user: GRIGAPI.GrigEntityQuery.Data.Ranking)
@@ -18,6 +19,7 @@ public protocol MainRouting: ViewableRouting {
     func detachCompete()
     func detachUserAndAttachCompete()
     func presentActionSheet()
+    func presentUserSafari(url: URL)
 }
 
 protocol MainPresentable: Presentable {
