@@ -483,6 +483,7 @@ private extension CompeteViewController {
             $0.isHidden = false
         }
         idView.isHidden = false
+        presentFailureAlert(title: "찾을 수 없는 아이디입니다.", message: "아이디를 확인해주세요!", style: .alert)
     }
     func hideInvalidUsername() {
         contentView.subviews.forEach {
