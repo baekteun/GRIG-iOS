@@ -1,5 +1,5 @@
 # Github Rank In GSM
-
+[바로가기](https://apps.apple.com/kr/app/gri-g/id1622010590)
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74440939/170815758-9d22f362-8416-4b76-b879-c85be27020f3.png" width="150"/>
 </div>
