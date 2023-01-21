@@ -39,11 +39,6 @@ AppStore - https://apps.apple.com/kr/app/gri-g/id1622010590
 
 <br>
 
-## ⚙️ Environment
-- Tuist 3.4.0
-
-<br>
-
 ## 🏃‍♀️ Run Project
 ```bash
 $ curl -Ls https://install.tuist.io | bash
