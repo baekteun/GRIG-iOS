@@ -29,6 +29,31 @@ AppStore - https://apps.apple.com/kr/app/gri-g/id1622010590
 
 <br>
 
+## 📚 Tech Stack
+- Swift
+- Tuist
+- RIBs
+- Apollo-iOS
+- RxSwift
+- Clean Architecture
+
+<br>
+
+## ⚙️ Environment
+- Tuist 3.4.0
+
+<br>
+
+## 🏃‍♀️ Run Project
+```bash
+$ curl -Ls https://install.tuist.io | bash
+$ brew install make
+
+$ make generate
+```
+
+<br>
+
 ## ⭐️ Key Function
 ### 메인
 - 학생들의 Github 활동을 랭킹으로 확인
