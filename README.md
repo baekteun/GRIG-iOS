@@ -45,6 +45,7 @@ $ curl -Ls https://install.tuist.io | bash
 $ brew install make
 
 $ make generate
+$ xed .
 ```
 
 <br>
