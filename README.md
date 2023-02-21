@@ -22,9 +22,7 @@ AppStore - https://apps.apple.com/kr/app/gri-g/id1622010590
 <details>
 <summary>모듈 구조</summary>
 
-<div>
-<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/334deff9-f4c8-43f7-aa94-beffe8431053/graph.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230121%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230121T134437Z&X-Amz-Expires=86400&X-Amz-Signature=84be715948de659d19f08cbd0b79a5ea1b91700fb1b786a8520cfe7913699e81&X-Amz-SignedHeaders=host&response-content-disposition=filename%3D%22graph.png%22&x-id=GetObject" width="500">
-</div>
+<img src="graph.png" />
 </details>
 
 <br>
